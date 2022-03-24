@@ -1,0 +1,56 @@
+:root {
+    --foreground-good-color: rgb(0, 194, 0);
+    --foreground-fair-color: rgb(206, 134, 0);
+    --foreground-poor-color: rgb(161, 0, 0);
+    --foreground-excellent-color: rgb(0, 199, 199);
+}
+
+.collapsible {
+    box-shadow: 0 0 0 0; border: none;
+}
+
+.collapsible-header {
+    position: relative;
+}
+
+.score {
+    position: absolute; 
+    right: 0; 
+    margin-right: 16px;
+    font-weight: bold;
+
+}
+
+.score.good {
+    color: var(--foreground-good-color)
+}
+
+.score.fair {
+    color: var(--foreground-fair-color)
+}
+
+.score.poor {
+    color: var(--foreground-poor-color)
+}
+
+.score.excellent {
+    color: var(--foreground-excellent-color)
+}
+
+.html-output {
+    border: 1px solid #eee;
+    padding: 16px;
+    border-radius: 5px;
+}
+
+table {
+    border-left: 5px solid #eee;
+}
+
+table tr {
+    border-bottom: none;
+}
+
+table td {
+    padding: 0 0 0 10px
+}

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" type="text/css" />
+
+    <script type="text/javascript">
+        // Grade values
+        const GRADE_POOR = 0
+        const GRADE_FAIR = 0.45
+        const GRADE_GOOD = 0.80
+        const GRADE_EXCE = 1
+
+        // Colors corresponding with grade values
+        const VALUE_COLORS = {
+            "poor" : "rgb(161, 0, 0);",
+            "fair" : "rgb(206, 134, 0)",
+            "good" : "rgb(0, 194, 0)",
+            "exce" : "rgb(0, 199, 199)"
+        }
+
+        // Structure & Efficiency Color and Feedback
+        const STRUCTURE_FEEDBACK = {
+            "structure-ids" : "Application missing descriptive IDs for XML view components.",
+            "structure-variables" : "Application missing descriptive names for classes, variables, or methods.",
+            "structure-required" : "Application UI missing required elements.",
+            "structure-warnings" : "Application contains more than 1 (one) but less than 9 (nine) non-lint warnings.",
+            "structure-warnings10" : "Application contains 10 (ten) or more non-lint Java warnings.",
+            "structure-nonfunctional" : "Application application is non-functional."
+        } 
+
+        let checkedScore = []
+
+        // Earned point values for rubric columns
+        let points = {
+            "structure" : "",
+            "ui" :  "",
+            "design" : "",
+        };
+
+        // Total points available for each column
+        const POINTS_VALUES = {
+            "structure" : 10,
+            "ui" :  60,
+            "design" : 30,
+        }
+
+        let htmlStructure;
+        let htmlUi;
+        let htmlDesign;
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let output;
+
+            // Intializers
+            var elems = document.querySelectorAll('select')
+            var instances = M.FormSelect.init(elems, null)
+
+            var elems = document.querySelectorAll('.collapsible')
+            var instances = M.Collapsible.init(elems, null)
+
+            // Checkboxes
+            var checkboxes = document.querySelectorAll("input[type=checkbox]")
+
+            // Use Array.forEach to add an event listener to each checkbox.
+            checkboxes.forEach(function (_checkbox) {
+                _checkbox.addEventListener('change', function () {
+                    checkedScore =
+                        Array.from(checkboxes)          // Convert checkboxes to an array to use filter and map.
+                            .filter(i => i.checked)     // Use Array.filter to remove unchecked checkboxes.
+                            .map(i => i.value)          // Use Array.map to extract only the checkbox values from the array of objects.
+
+
+                    // Update UI and Output HTML
+                    points.structure = getStructureGrade(checkedScore)
+                    updateFormSectionGradeValue("structure", points.structure)
+
+                    // addCheckedItemsToList(checkedScore,structureFeedback,document.querySelector('ul.structure-out'))
+
+                    updateOutputSectionScore()
+
+                    // updateOutputBody();
+                })
+            });
+
+            var studentNameInput = document.querySelector('#student_name')
+
+            studentNameInput.addEventListener('change', function(e){
+                updateStudentName(e.target.value)
+            })
+
+            document.querySelector('textarea').addEventListener('change', function(e){
+                let columnId = e.target.id.split("_")
+
+                updateAdditionalFeedbackOutput(columnId[0]);
+            });
+
+        });
+
+        function updateStudentName(name){
+            if(name === null || name.length === 0){
+                document.querySelector('.html-output .student').textContent = "Student"
+            } else {
+                document.querySelector('.html-output .student').textContent = name
+            }
+        }
+
+        function addCheckedItemsToList(checked, options, elem){
+            let outHtml = []
+
+            for(let key in options) {
+                if(checked.includes(key)){
+                    outHtml.push(`<li>${options[key]}</li>`)
+                }
+            }
+
+            elem.innerHTML = htmlStringArrayToString(outHtml)
+        }
+
+        function htmlStringArrayToString(html){
+            let combinedHtml = ""
+
+            for(i = 0; i < html.length; i++){
+                combinedHtml += html[i]
+            }
+
+            return combinedHtml
+        }
+
+        function getStructureGrade(){
+            if(['structure-nonfunctional', 'structure-warnings10', 'structure-required'].some(el => checkedScore.includes(el))){
+                return GRADE_POOR
+            }
+
+            if(['structure-warnings'].some(el => checkedScore.includes(el))){
+                return GRADE_FAIR
+            }
+
+            if(['structure-ids', 'structure-variables'].some(el => checkedScore.includes(el))){
+                return GRADE_GOOD
+            }
+
+            return GRADE_EXCE
+        }
+
+
+        /**
+         * Updates the HTML class of the element corresponding with the rubric _column 
+         * with the points from the correponding points value category (eg. "GOOD", "POOR", etc.)
+         * 
+         * @param {string} _column Rubric column being evaluated
+         * @param {number} _points Field of the points object that corresponds with the rubric column
+         */
+        function updateFormSectionGradeValue(_column, _points){
+            var score = document.querySelector(`li.${_column} .score`)
+
+            // Percentage of points out of total available points per passed rubric column
+            score.textContent = `${_points * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
+
+            switch (_points){
+                case GRADE_POOR:
+                    score.className = "score poor"
+                    break
+
+                case GRADE_FAIR:
+                    score.className = "score fair"
+                    break
+
+                case GRADE_GOOD:
+                    score.className = "score good"
+                    break
+
+                case GRADE_EXCE:
+                default:
+                    score.className = "score excellent"
+                    break
+            }
+        }
+
+        
+        /**
+         * Updates additional feedback table with corresponding feedback from form.
+         * 
+         * @param {string} _column ID of corresponding rubric column
+         */
+        function updateAdditionalFeedbackOutput(_column){
+            let comment = document.querySelector(`.${_column} #${_column}_comment`).value
+
+            console.log(comment.length)
+
+            if(comment.length > 0){
+                document.querySelector(`.${_column}-output table`).style.display = "table"
+
+                document.querySelector(`.${_column}-output table p`).innerHTML = comment
+            } else {
+                document.querySelector(`.${_column}-output table`).style.display = "none"
+            }
+        }
+
+
+        function updateOutputSectionScore(){
+            Object.keys(points).forEach(_key => {
+
+                // ONLY run for structure
+                // TODO: Change this when everything is more fleshed out.
+
+                if(_key == "structure"){
+                    // Header "score" element
+                    let scoreElement = document.querySelector(`.${_key}-output .output-header span`)
+
+                    // Set the score to X out of Y points
+                    scoreElement.textContent = `${points[_key] * POINTS_VALUES[_key]}/${POINTS_VALUES[_key]}`
+                    
+                    // Select the RGB color value that corresponds with point percentage
+                    switch(points[_key]){
+                        case GRADE_POOR:
+                            scoreElement.style = `color: ${VALUE_COLORS.poor}`
+                            break
+
+                        case GRADE_FAIR:
+                            scoreElement.style = `color: ${VALUE_COLORS.fair}`
+                            break
+
+                        case GRADE_GOOD:
+                            scoreElement.style = `color: ${VALUE_COLORS.good}`
+                            break
+
+                        case GRADE_EXCE:
+                        default:
+                            scoreElement.style = `color: ${VALUE_COLORS.exce}`
+                            break
+                    }
+
+                    console.log(`
+                        Key: ${_key}\n
+                        Score: ${points[_key]}\n
+                        Total Available: ${POINTS_VALUES[_key]}\n
+                        Calculated: ${points[_key]/POINTS_VALUES[_key]}/${POINTS_VALUES[_key]}
+                    `)
+                
+                }
+
+            });
+        }
+
+        // TODO: build collections of LIs for the Lists
+
+</script>
+
+    <title>Document</title>
+</head>
+
+<body>
+    <main class="container">
+        <div class="row">
+            <section class="col l6 m12">
+                <h4>Grading</h4>
+
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input id="student_name" type="text" class="validate">
+                        <label for="student_name">Student Name</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <select>
+                            <option value="" disabled selected>Choose your option</option>
+                            <option value="1">Code Exercise 01: Layouts</option>
+                            <option value="2">Code Exercise 02: Resources</option>
+                            <option value="3">Code Exercise 03: Styles</option>
+                            <option value="4">Code Exercise 04: Material</option>
+                            <option value="5">Code Exercise 05: Fragments</option>
+                            <option value="6">Code Exercise 06: Interfaces</option>
+                            <option value="7">Code Exercise 07: Activities</option>
+                            <option value="8">Code Exercise 08: Final</option>
+                        </select>
+                        <label>Code Exercise</label>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h5>Code Exercise 01: Layouts</h5>
+
+                    <!-- Rubric column evaluations -->
+                    <ul class="collapsible">
+                        <li class="structure"><!-- This value corresponds with rubric column "id" value -->
+                            <div class="collapsible-header">
+                                <i class="material-icons">analytics</i>
+                                Structure and Efficiency
+
+                                <span class="score excellent">10/10</span>
+                            </div>
+
+                            <div class="collapsible-body">
+                                <label>
+                                    <input type="checkbox" value="structure-ids" />
+                                    <span>No descriptive IDs</span>
+                                </label><br />
+
+                                <label>
+                                    <input type="checkbox" value="structure-variables"/>
+                                    <span>No descriptive variables, classes, and methods</span>
+                                </label><br />
+
+                                <label>
+                                    <input type="checkbox" value="structure-required"/>
+                                    <span>Missing Required Elements</span>
+                                </label><br />
+
+                                <label>
+                                    <input type="checkbox" value="structure-warnings" />
+                                    <span>Warnings (1-9)</span>
+                                </label><br />
+
+                                <label>
+                                    <input type="checkbox" value="structure-warnings10" />
+                                    <span>Warnings (10+)</span>
+                                </label><br />
+
+                                <label>
+                                    <input type="checkbox" value="structure-nonfunctional" />
+                                    <span>Non-functional</span>
+                                </label><br />
+
+                                <textarea id="structure_comment" class="materialize-textarea"></textarea>
+                                <label for="structure_comment">Additional Comments</label>
+                            </div>
+                        </li>
+                        <li class="ui">
+                            <div class="collapsible-header">
+                                <i class="material-icons">space_dashboard</i>
+                                User Interface
+
+                                <span class="score" data-ui-score="60">60/60</span>
+                            </div>
+
+                            <div class="collapsible-body">
+                                <!-- Good -->
+                                <label>
+                                    <input type="checkbox" />
+                                    <span>Both layouts are not identical</span>
+                                </label><br />
+
+                                <label>
+                                    <input type="checkbox" />
+                                    <span>Icons not aligned correctly</span>
+                                </label><br />
+
+                                <!-- Fair -->
+                                <label>
+                                    <input type="checkbox" />
+                                    <span>No Section Icons</span>
+                                </label><br />
+
+                                <!-- Fair -->
+                                <label>
+                                    <input type="checkbox" />
+                                    <span>Both Layouts visible</span>
+                                </label><br />
+
+                                <!-- Poor -->
+                                <label>
+                                    <input type="checkbox" />
+                                    <span>Missing Required Elements</span>
+                                </label><br />
+
+                                <label>
+                                    <input type="checkbox" />
+                                    <span>Non-functional</span>
+                                </label><br />
+
+                                <textarea id="ui_comment" class="materialize-textarea"></textarea>
+                                <label for="ui_comment">Additional Comments</label>
+                            </div>
+                        </li>
+                        <li class="design">
+                            <div class="collapsible-header">
+                                <i class="material-icons">rule</i>
+                                Design Standards
+
+                                <span class="score" data-design-score="30">30/30</span>
+                            </div>
+                            <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                        </li>
+                    </ul>
+                </div>
+
+            </section>
+
+            <section class="col l6 m12">
+                <h4>Output</h4>
+
+                <div class="html-output">
+                    <p>
+                        <span class="student">Student</span>,<br /><br />
+                        <span class="status">Excellent work on this assignment!</span>
+                    </p>
+
+                    <div class="structure-output">
+                        <strong class="output-header">Structure and efficiency: <span style="color: rgb(206, 134, 0)">6.5/10</span></strong>
+
+                        <ul class="output-list">
+                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application is functional.</strong> ✓ </li>
+                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application contains all required UI elements.</strong> ✓ </li>
+                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>All XML views have descriptive IDs.</strong> ✓ </li>
+                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>All methods, variables, and classes have descriptive names.</strong> ✓ </li>
+                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application contains less than 10 non-lint Java warnings.</strong> ✓ </li>
+                            <li style="color: rgb(151, 151, 151); margin-top: 4px">Application contains no non-lint Java warnings.</li>
+                        </ul>
+
+                        <table><tbody><tr><td><p>Your application contains 6 non-lint Java warnings for unused imports. Be sure to run <strong>Analyze -&gt; Inspect Code</strong> before turning in each assignment. You can watch the video below for some additional feedback, and let me know if you have any questions regarding this.</p></td></tr></tbody></table>    
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+    </main>
+</body>
+
+</html>

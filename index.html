@@ -80,6 +80,7 @@
 
                     // Update UI and Output HTML
                     points.structure = evaulateStructureGrade(checkedScore)
+                    points.ui = evaulateUiGrade(checkedScore)
 
                     PageUtils.updateFormColumnScore()
                     PageUtils.updateOutputColumnScore()
@@ -95,12 +96,18 @@
                 PageUtils.updateOutputStudentName(e.target.value)
             })
 
-            // Update output feedback
-            document.querySelector('textarea').addEventListener('change', function(e){
-                const columnId = e.target.id.split("_")
+            let textareas = Array.from(document.getElementsByTagName('textarea'))
 
-                PageUtils.updateOutputColumnFeedback(columnId[0]);
-            });
+            // Update textarea feedback
+            textareas.forEach(_textarea => {
+                _textarea.addEventListener('change', function(e){
+                    const columnId = e.target.id.split("_")
+
+                    // console.log(`Column ID: ${columnId}`)
+
+                    PageUtils.updateOutputColumnFeedback(columnId[0]);
+                });
+            })
 
             document.querySelector('.copy-html').addEventListener('click', function(){
                 PageUtils.copyOutputHtml()
@@ -281,7 +288,21 @@
             return GRADE_EXCE
         }
 
+        function evaulateUiGrade(){
+            if(['ui-functional', 'ui-required'].some(el => checkedScore.includes(el))){
+                return GRADE_POOR
+            }
 
+            if(['ui-icons', 'ui-visibility'].some(el => checkedScore.includes(el))){
+                return GRADE_FAIR
+            }
+
+            if(['ui-layouts', 'ui-icons-aligned'].some(el => checkedScore.includes(el))){
+                return GRADE_GOOD
+            }
+
+            return GRADE_EXCE
+        }
 
 </script>
 
@@ -377,35 +398,35 @@
                             <div class="collapsible-body">
                                 <!-- Good -->
                                 <label>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" value="ui-layouts" />
                                     <span>Both layouts are not identical</span>
                                 </label><br />
 
                                 <label>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" value="ui-icons-aligned"/>
                                     <span>Icons not aligned correctly</span>
                                 </label><br />
 
                                 <!-- Fair -->
                                 <label>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" value="ui-icons"/>
                                     <span>No Section Icons</span>
                                 </label><br />
 
                                 <!-- Fair -->
                                 <label>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" value="ui-visiblility"/>
                                     <span>Both Layouts visible</span>
                                 </label><br />
 
                                 <!-- Poor -->
                                 <label>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" value="ui-required"/>
                                     <span>Missing Required Elements</span>
                                 </label><br />
 
                                 <label>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" value="ui-functional"/>
                                     <span>Non-functional</span>
                                 </label><br />
 
@@ -438,20 +459,36 @@
                         <span class="status">Excellent work on this assignment!</span>
                     </p>
 
-                    <div class="structure-output">
+                    <div class="structure-output"><!-- Column Output Start -->
                         <strong class="output-header">Structure and efficiency: <span>10/10</span></strong>
 
                         <ul class="output-list">
-                            <li class="structure-ids" style="color: rgb(151, 151, 151); margin-top: 4px">Application is functional. <span style="display: none;">✓</span></li>
-                            <li class="structure-variables" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains all required UI elements. <span style="display: none;">✓</span></li>
-                            <li class="structure-required" style="color: rgb(151, 151, 151); margin-top: 4px">All XML views have descriptive IDs. <span style="display: none;">✓</span></li>
-                            <li class="structure-warnings" style="color: rgb(151, 151, 151); margin-top: 4px">All methods, variables, and classes have descriptive names. <span style="display: none;">✓</span></li>
+                            <li class="structure-nonfunctional" style="color: rgb(151, 151, 151); margin-top: 4px">Application is functional. <span style="display: none;">✓</span></li>
+                            <li class="structure-required" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains all required UI elements. <span style="display: none;">✓</span></li>
+                            <li class="structure-ids" style="color: rgb(151, 151, 151); margin-top: 4px">All XML views have descriptive IDs. <span style="display: none;">✓</span></li>
+                            <li class="structure-variables" style="color: rgb(151, 151, 151); margin-top: 4px">All methods, variables, and classes have descriptive names. <span style="display: none;">✓</span></li>
+                            <li class="structure-warnings" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains no non-lint Java warnings. <span style="display: none;">✓</span></li>
                             <li class="structure-warnings10" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains less than 10 non-lint Java warnings. <span style="display: none;">✓</span></li>
-                            <li class="structure-nonfunctional" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains no non-lint Java warnings. <span style="display: none;">✓</span></li>
                         </ul>
                         
-                        <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>    
-                    </div>
+                        <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>
+                    </div><!-- Column Output End -->
+
+                    <div class="ui-output"><!-- Column Output Start -->
+                        <strong class="output-header">User Interface: <span>10/10</span></strong>
+
+                        <ul class="output-list">
+                            <li class="ui-functional" style="color: rgb(151, 151, 151); margin-top: 4px">Application is functional. <span style="display: none;">✓</span></li>
+                            <li class="ui-required" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains all required UI elements. <span style="display: none;">✓</span></li>
+                            <li class="ui-layouts" style="color: rgb(151, 151, 151); margin-top: 4px">Both Linear and Constraint layouts are identical. <span style="display: none;">✓</span></li>
+                            <li class="ui-visiblility" style="color: rgb(151, 151, 151); margin-top: 4px">Only one layout is visible at a time. <span style="display: none;">✓</span></li>
+                            <li class="ui-icons" style="color: rgb(151, 151, 151); margin-top: 4px">Each section has a related content icon. <span style="display: none;">✓</span></li>
+                            <li class="ui-icons-aligned" style="color: rgb(151, 151, 151); margin-top: 4px">Section icons are properly align with the top of the section. <span style="display: none;">✓</span></li>
+                        </ul>
+                        
+                        <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>
+                    </div><!-- Column Output End -->
+
                 </div>
 
                 <h5>HTML</h5>

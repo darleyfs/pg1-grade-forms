@@ -81,7 +81,7 @@
                     // Update UI and Output HTML
                     points.structure = evaulateStructureGrade(checkedScore)
 
-                    PageUtils.updateFormColumnScore("structure", points.structure)
+                    PageUtils.updateFormColumnScore()
                     PageUtils.updateOutputColumnScore()
                     PageUtils.updateOutputColumnRequirements(checkedScore)
                     PageUtils.updateHtmlOutput()
@@ -124,30 +124,35 @@
              * @param {string} _column Rubric column being evaluated
              * @param {number} _points Field of the points object that corresponds with the rubric column
              */
-            static updateFormColumnScore(_column, _points){
-                var score = document.querySelector(`li.${_column} .score`)
+            static updateFormColumnScore(){
+                Object.keys(points).forEach(_column => {
 
-                // Percentage of points out of total available points per passed rubric column
-                score.textContent = `${_points * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
+                    if(points[_column] != null){
+                        var score = document.querySelector(`li.${_column} .score`)
 
-                switch (_points){
-                    case GRADE_POOR:
-                        score.className = "score poor"
-                        break
+                        // Percentage of points out of total available points per passed rubric column
+                        score.textContent = `${points[_column] * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
 
-                    case GRADE_FAIR:
-                        score.className = "score fair"
-                        break
+                        switch (points[_column]){
+                            case GRADE_POOR:
+                                score.className = "score poor"
+                                break
 
-                    case GRADE_GOOD:
-                        score.className = "score good"
-                        break
+                            case GRADE_FAIR:
+                                score.className = "score fair"
+                                break
 
-                    case GRADE_EXCE:
-                    default:
-                        score.className = "score excellent"
-                        break
-                }
+                            case GRADE_GOOD:
+                                score.className = "score good"
+                                break
+
+                            case GRADE_EXCE:
+                            default:
+                                score.className = "score excellent"
+                                break
+                        }
+                    }
+                })
             }
 
             static updateOutputColumnRequirements(_checked){
@@ -193,34 +198,35 @@
                     // ONLY run for structure
                     // TODO: Change this when everything is more fleshed out.
 
-                    if(_column == "structure"){
+                    if(points[_column] != null){
                         // Header "score" element
                         let scoreElement = document.querySelector(`.${_column}-output .output-header span`)
 
-                        // Set the score to X out of Y points
-                        scoreElement.textContent = `${points[_column] * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
-                        
-                        // Select the RGB color value that corresponds with point percentage
-                        switch(points[_column]){
-                            case GRADE_POOR:
-                                scoreElement.style = `color: ${VALUE_COLORS.poor}`
-                                break
+                        if(scoreElement != null){
+                            // Set the score to X out of Y points
+                            scoreElement.textContent = `${points[_column] * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
+                            
+                            // Select the RGB color value that corresponds with point percentage
+                            switch(points[_column]){
+                                case GRADE_POOR:
+                                    scoreElement.style = `color: ${VALUE_COLORS.poor}`
+                                    break
 
-                            case GRADE_FAIR:
-                                scoreElement.style = `color: ${VALUE_COLORS.fair}`
-                                break
+                                case GRADE_FAIR:
+                                    scoreElement.style = `color: ${VALUE_COLORS.fair}`
+                                    break
 
-                            case GRADE_GOOD:
-                                scoreElement.style = `color: ${VALUE_COLORS.good}`
-                                break
+                                case GRADE_GOOD:
+                                    scoreElement.style = `color: ${VALUE_COLORS.good}`
+                                    break
 
-                            case GRADE_EXCE:
-                            default:
-                                scoreElement.style = `color: ${VALUE_COLORS.exce}`
-                                break
+                                case GRADE_EXCE:
+                                default:
+                                    scoreElement.style = `color: ${VALUE_COLORS.exce}`
+                                    break
+                            }
                         }
                     }
-
                 });
             }
 
@@ -228,6 +234,10 @@
                 const outputHtml = document.querySelector(".rich-output").innerHTML
 
                 document.querySelector(".html-output pre").textContent = outputHtml
+            }
+
+            static updateOutputOnCheckedChange(){
+
             }
 
             static copyOutputHtml() {

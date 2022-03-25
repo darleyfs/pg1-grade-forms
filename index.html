@@ -88,153 +88,156 @@
 
                     // Update UI and Output HTML
                     points.structure = evaulateStructureGrade(checkedScore)
-                    updateFormColumnScore("structure", points.structure)
+                    PageUtils.updateFormColumnScore("structure", points.structure)
 
                     // addCheckedItemsToList(checkedScore,structureFeedback,document.querySelector('ul.structure-out'))
 
-                    updateOutputSectionScore()
+                    PageUtils.updateOutputColumnScore()
 
                     // updateOutputBody();
                 })
             });
 
-            var studentNameInput = document.querySelector('#student_name')
-
-            studentNameInput.addEventListener('change', function(e){
-                updateOutputStudentName(e.target.value)
+            // Update output student name
+            document.querySelector('#student_name').addEventListener('change', function(e){
+                PageUtils.updateOutputStudentName(e.target.value)
             })
 
+            // Update output feedback
             document.querySelector('textarea').addEventListener('change', function(e){
                 let columnId = e.target.id.split("_")
 
-                updateOutputColumnFeedback(columnId[0]);
+                PageUtils.updateOutputColumnFeedback(columnId[0]);
             });
 
         });
 
-        function updateOutputStudentName(name){
-            if(name === null || name.length === 0){
-                document.querySelector('.html-output .student').textContent = "Student"
-            } else {
-                document.querySelector('.html-output .student').textContent = name
-            }
-        }
-
-        function addCheckedItemsToList(checked, options, elem){
-            let outHtml = []
-
-            for(let key in options) {
-                if(checked.includes(key)){
-                    outHtml.push(`<li>${options[key]}</li>`)
+        class PageUtils {
+            static updateOutputStudentName(name){
+                if(name === null || name.length === 0){
+                    document.querySelector('.html-output .student').textContent = "Student"
+                } else {
+                    document.querySelector('.html-output .student').textContent = name
                 }
             }
 
-            elem.innerHTML = htmlStringArrayToString(outHtml)
-        }
+            static addCheckedItemsToList(checked, options, elem){
+                let outHtml = []
 
-        function htmlStringArrayToString(html){
-            let combinedHtml = ""
-
-            for(i = 0; i < html.length; i++){
-                combinedHtml += html[i]
-            }
-
-            return combinedHtml
-        }
-
-
-        /**
-         * Updates the HTML class of the element corresponding with the rubric _column 
-         * with the points from the correponding points value category (eg. "GOOD", "POOR", etc.)
-         * 
-         * @param {string} _column Rubric column being evaluated
-         * @param {number} _points Field of the points object that corresponds with the rubric column
-         */
-        function updateFormColumnScore(_column, _points){
-            var score = document.querySelector(`li.${_column} .score`)
-
-            // Percentage of points out of total available points per passed rubric column
-            score.textContent = `${_points * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
-
-            switch (_points){
-                case GRADE_POOR:
-                    score.className = "score poor"
-                    break
-
-                case GRADE_FAIR:
-                    score.className = "score fair"
-                    break
-
-                case GRADE_GOOD:
-                    score.className = "score good"
-                    break
-
-                case GRADE_EXCE:
-                default:
-                    score.className = "score excellent"
-                    break
-            }
-        }
-
-        
-        /**
-         * Updates additional feedback table with corresponding feedback from form.
-         * 
-         * @param {string} _column ID of corresponding rubric column
-         */
-        function updateOutputColumnFeedback(_column){
-            let comment = document.querySelector(`.${_column} #${_column}_comment`).value
-
-            console.log(comment.length)
-
-            if(comment.length > 0){
-                document.querySelector(`.${_column}-output table`).style.display = "table"
-
-                document.querySelector(`.${_column}-output table p`).innerHTML = comment
-            } else {
-                document.querySelector(`.${_column}-output table`).style.display = "none"
-            }
-        }
-
-
-        function updateOutputSectionScore(){
-            Object.keys(points).forEach(_key => {
-
-                // ONLY run for structure
-                // TODO: Change this when everything is more fleshed out.
-
-                if(_key == "structure"){
-                    // Header "score" element
-                    let scoreElement = document.querySelector(`.${_key}-output .output-header span`)
-
-                    // Set the score to X out of Y points
-                    scoreElement.textContent = `${points[_key] * POINTS_VALUES[_key]}/${POINTS_VALUES[_key]}`
-                    
-                    // Select the RGB color value that corresponds with point percentage
-                    switch(points[_key]){
-                        case GRADE_POOR:
-                            scoreElement.style = `color: ${VALUE_COLORS.poor}`
-                            break
-
-                        case GRADE_FAIR:
-                            scoreElement.style = `color: ${VALUE_COLORS.fair}`
-                            break
-
-                        case GRADE_GOOD:
-                            scoreElement.style = `color: ${VALUE_COLORS.good}`
-                            break
-
-                        case GRADE_EXCE:
-                        default:
-                            scoreElement.style = `color: ${VALUE_COLORS.exce}`
-                            break
+                for(let key in options) {
+                    if(checked.includes(key)){
+                        outHtml.push(`<li>${options[key]}</li>`)
                     }
                 }
 
-            });
+                elem.innerHTML = htmlStringArrayToString(outHtml)
+            }
+
+            static htmlStringArrayToString(html){
+                let combinedHtml = ""
+
+                for(i = 0; i < html.length; i++){
+                    combinedHtml += html[i]
+                }
+
+                return combinedHtml
+            }
+
+
+            /**
+             * Updates the HTML class of the element corresponding with the rubric _column 
+             * with the points from the correponding points value category (eg. "GOOD", "POOR", etc.)
+             * 
+             * @param {string} _column Rubric column being evaluated
+             * @param {number} _points Field of the points object that corresponds with the rubric column
+             */
+            static updateFormColumnScore(_column, _points){
+                var score = document.querySelector(`li.${_column} .score`)
+
+                // Percentage of points out of total available points per passed rubric column
+                score.textContent = `${_points * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
+
+                switch (_points){
+                    case GRADE_POOR:
+                        score.className = "score poor"
+                        break
+
+                    case GRADE_FAIR:
+                        score.className = "score fair"
+                        break
+
+                    case GRADE_GOOD:
+                        score.className = "score good"
+                        break
+
+                    case GRADE_EXCE:
+                    default:
+                        score.className = "score excellent"
+                        break
+                }
+            }
+
+            
+            /**
+             * Updates additional feedback table with corresponding feedback from form.
+             * 
+             * @param {string} _column ID of corresponding rubric column
+             */
+            static updateOutputColumnFeedback(_column){
+                let comment = document.querySelector(`.${_column} #${_column}_comment`).value
+
+                console.log(comment.length)
+
+                if(comment.length > 0){
+                    document.querySelector(`.${_column}-output table`).style.display = "table"
+
+                    document.querySelector(`.${_column}-output table p`).innerHTML = comment
+                } else {
+                    document.querySelector(`.${_column}-output table`).style.display = "none"
+                }
+            }
+
+
+            static updateOutputColumnScore(){
+                Object.keys(points).forEach(_column => {
+
+                    // ONLY run for structure
+                    // TODO: Change this when everything is more fleshed out.
+
+                    if(_column == "structure"){
+                        // Header "score" element
+                        let scoreElement = document.querySelector(`.${_column}-output .output-header span`)
+
+                        // Set the score to X out of Y points
+                        scoreElement.textContent = `${points[_column] * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
+                        
+                        // Select the RGB color value that corresponds with point percentage
+                        switch(points[_column]){
+                            case GRADE_POOR:
+                                scoreElement.style = `color: ${VALUE_COLORS.poor}`
+                                break
+
+                            case GRADE_FAIR:
+                                scoreElement.style = `color: ${VALUE_COLORS.fair}`
+                                break
+
+                            case GRADE_GOOD:
+                                scoreElement.style = `color: ${VALUE_COLORS.good}`
+                                break
+
+                            case GRADE_EXCE:
+                            default:
+                                scoreElement.style = `color: ${VALUE_COLORS.exce}`
+                                break
+                        }
+                    }
+
+                });
+            }
+
+            // TODO: build collections of LIs for the Lists
         }
 
-        // TODO: build collections of LIs for the Lists
 
         /**
          * ======================================

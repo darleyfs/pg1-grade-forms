@@ -32,6 +32,14 @@
             "exce" : "rgb(0, 199, 199)"
         }
 
+        // Earned point values for rubric columns
+        // Note: These keys define keys used throughout the document
+        let points = {
+            "structure" : "",
+            "ui" :  "",
+            "design" : "",
+        };
+
         // Total points available for each column
         // Total value = 100
         const POINTS_VALUES = {
@@ -39,14 +47,6 @@
             "ui" :  60,
             "design" : 30,
         }
-
-        // Earned point values for rubric columns
-        // These keys define keys used throughout the document
-        let points = {
-            "structure" : "",
-            "ui" :  "",
-            "design" : "",
-        };
 
         let htmlStructure;
         let htmlUi;
@@ -69,6 +69,8 @@
 
             // Use Array.forEach to add an event listener to each checkbox.
             checkboxes.forEach(function (_checkbox) {
+                // TODO: move this method to the PageUtils
+
                 _checkbox.addEventListener('change', function () {
                     checkedScore =
                         Array.from(checkboxes)          // Convert checkboxes to an array to use filter and map.
@@ -421,20 +423,13 @@
                 <div class="rich-output">
                     <p>
                         <span class="student">Student</span>,<br /><br />
+
+                        <!-- TODO: Make this dynamic based on grade value -->
                         <span class="status">Excellent work on this assignment!</span>
                     </p>
 
                     <div class="structure-output">
                         <strong class="output-header">Structure and efficiency: <span>10/10</span></strong>
-
-                        <!-- <ul class="output-list">
-                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application is functional.</strong> ✓ </li>
-                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application contains all required UI elements.</strong> ✓ </li>
-                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>All XML views have descriptive IDs.</strong> ✓ </li>
-                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>All methods, variables, and classes have descriptive names.</strong> ✓ </li>
-                            <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application contains less than 10 non-lint Java warnings.</strong> ✓ </li>
-                            <li style="color: rgb(151, 151, 151); margin-top: 4px">Application contains no non-lint Java warnings.</li>
-                        </ul> -->
 
                         <ul class="output-list">
                             <li class="structure-ids" style="color: rgb(151, 151, 151); margin-top: 4px">Application is functional. <span style="display: none;">✓</span></li>
@@ -446,11 +441,7 @@
                         </ul>
                         
                         <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>    
-
-
-                        <!-- <table><tbody><tr><td><p>Your application contains 6 non-lint Java warnings for unused imports. Be sure to run <strong>Analyze -&gt; Inspect Code</strong> before turning in each assignment. You can watch the video below for some additional feedback, and let me know if you have any questions regarding this.</p></td></tr></tbody></table>     -->
                     </div>
-
                 </div>
 
                 <h5>HTML</h5>

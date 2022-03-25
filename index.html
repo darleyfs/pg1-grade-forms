@@ -110,6 +110,10 @@
                 PageUtils.updateOutputColumnFeedback(columnId[0]);
             });
 
+            document.querySelector('.copy-html').addEventListener('click', function(){
+                PageUtils.copyOutputHtml()
+            });
+
         });
 
         class PageUtils {
@@ -120,29 +124,6 @@
                     document.querySelector('.rich-output .student').textContent = name
                 }
             }
-
-            static addCheckedItemsToList(checked, options, elem){
-                let outHtml = []
-
-                for(let key in options) {
-                    if(checked.includes(key)){
-                        outHtml.push(`<li>${options[key]}</li>`)
-                    }
-                }
-
-                elem.innerHTML = htmlStringArrayToString(outHtml)
-            }
-
-            static htmlStringArrayToString(html){
-                let combinedHtml = ""
-
-                for(i = 0; i < html.length; i++){
-                    combinedHtml += html[i]
-                }
-
-                return combinedHtml
-            }
-
 
             /**
              * Updates the HTML class of the element corresponding with the rubric _column 
@@ -179,11 +160,9 @@
 
             static updateOutputColumnRequirements(_checked){
                 if(_checked.length > 0 && _checked != null){
-                    let columnId = _checked[0].split("-")[0]
+                    const columnId = _checked[0].split("-")[0]
 
-                    console.log(`Column ID: ${columnId}`)
-
-                    let listItems = Array.from(document.querySelectorAll(`.${columnId}-output .output-list li`))
+                    const listItems = Array.from(document.querySelectorAll(`.${columnId}-output .output-list li`))
 
                     listItems.forEach(_item => {
                         if(_checked.includes(_item.className)){
@@ -203,7 +182,7 @@
              * @param {string} _column ID of corresponding rubric column
              */
             static updateOutputColumnFeedback(_column){
-                let comment = document.querySelector(`.${_column} #${_column}_comment`).value
+                const comment = document.querySelector(`.${_column} #${_column}_comment`).value
 
                 console.log(comment.length)
 
@@ -254,12 +233,21 @@
             }
 
             static updateHtmlOutput(){
-                let outputHtml = document.querySelector(".rich-output").innerHTML
+                const outputHtml = document.querySelector(".rich-output").innerHTML
 
                 document.querySelector(".html-output pre").textContent = outputHtml
             }
 
-            // TODO: build collections of LIs for the Lists
+            static copyOutputHtml() {
+                console.log("Click!")
+
+                const el = document.createElement("textarea");
+                el.value = document.querySelector('.rich-output').innerHTML;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
+            }
         }
 
 
@@ -439,7 +427,7 @@
 
             <section class="col l6 m12">
                 <h4>Output</h4>
-                <h5>Rich Text</h5>
+                <h5>Rich Text <button class="copy-html waves-effect waves-light btn-small right">Copy HTML</button></h5>
                 <div class="rich-output">
                     <p>
                         <span class="student">Student</span>,<br /><br />

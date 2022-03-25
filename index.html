@@ -32,6 +32,14 @@
             "exce" : "rgb(0, 199, 199)"
         }
 
+        // Total points available for each column
+        // Total value = 100
+        const POINTS_VALUES = {
+            "structure" : 10,
+            "ui" :  60,
+            "design" : 30,
+        }
+
         // Structure & Efficiency Color and Feedback
         const STRUCTURE_FEEDBACK = {
             "structure-ids" : "Application missing descriptive IDs for XML view components.",
@@ -42,26 +50,19 @@
             "structure-nonfunctional" : "Application application is non-functional."
         } 
 
-        let checkedScore = []
-
         // Earned point values for rubric columns
+        // These keys define keys used throughout the document
         let points = {
             "structure" : "",
             "ui" :  "",
             "design" : "",
         };
 
-        // Total points available for each column
-        const POINTS_VALUES = {
-            "structure" : 10,
-            "ui" :  60,
-            "design" : 30,
-        }
-
         let htmlStructure;
         let htmlUi;
         let htmlDesign;
 
+        let checkedScore = []
 
         document.addEventListener('DOMContentLoaded', function () {
             let output;
@@ -86,8 +87,8 @@
 
 
                     // Update UI and Output HTML
-                    points.structure = getStructureGrade(checkedScore)
-                    updateFormSectionGradeValue("structure", points.structure)
+                    points.structure = evaulateStructureGrade(checkedScore)
+                    updateFormColumnScore("structure", points.structure)
 
                     // addCheckedItemsToList(checkedScore,structureFeedback,document.querySelector('ul.structure-out'))
 
@@ -100,18 +101,18 @@
             var studentNameInput = document.querySelector('#student_name')
 
             studentNameInput.addEventListener('change', function(e){
-                updateStudentName(e.target.value)
+                updateOutputStudentName(e.target.value)
             })
 
             document.querySelector('textarea').addEventListener('change', function(e){
                 let columnId = e.target.id.split("_")
 
-                updateAdditionalFeedbackOutput(columnId[0]);
+                updateOutputColumnFeedback(columnId[0]);
             });
 
         });
 
-        function updateStudentName(name){
+        function updateOutputStudentName(name){
             if(name === null || name.length === 0){
                 document.querySelector('.html-output .student').textContent = "Student"
             } else {
@@ -141,22 +142,6 @@
             return combinedHtml
         }
 
-        function getStructureGrade(){
-            if(['structure-nonfunctional', 'structure-warnings10', 'structure-required'].some(el => checkedScore.includes(el))){
-                return GRADE_POOR
-            }
-
-            if(['structure-warnings'].some(el => checkedScore.includes(el))){
-                return GRADE_FAIR
-            }
-
-            if(['structure-ids', 'structure-variables'].some(el => checkedScore.includes(el))){
-                return GRADE_GOOD
-            }
-
-            return GRADE_EXCE
-        }
-
 
         /**
          * Updates the HTML class of the element corresponding with the rubric _column 
@@ -165,7 +150,7 @@
          * @param {string} _column Rubric column being evaluated
          * @param {number} _points Field of the points object that corresponds with the rubric column
          */
-        function updateFormSectionGradeValue(_column, _points){
+        function updateFormColumnScore(_column, _points){
             var score = document.querySelector(`li.${_column} .score`)
 
             // Percentage of points out of total available points per passed rubric column
@@ -197,7 +182,7 @@
          * 
          * @param {string} _column ID of corresponding rubric column
          */
-        function updateAdditionalFeedbackOutput(_column){
+        function updateOutputColumnFeedback(_column){
             let comment = document.querySelector(`.${_column} #${_column}_comment`).value
 
             console.log(comment.length)
@@ -250,6 +235,36 @@
         }
 
         // TODO: build collections of LIs for the Lists
+
+        /**
+         * ======================================
+         * 
+         *      RUBRIC-SPECIFIC GRADE EVALS
+         * 
+         * ======================================
+         * 
+         *  These methods determine how each rubric column is
+         *  evaluated and will need to be change for each assignment.
+         * 
+         */
+
+        function evaulateStructureGrade(){
+            if(['structure-nonfunctional', 'structure-warnings10', 'structure-required'].some(el => checkedScore.includes(el))){
+                return GRADE_POOR
+            }
+
+            if(['structure-warnings'].some(el => checkedScore.includes(el))){
+                return GRADE_FAIR
+            }
+
+            if(['structure-ids', 'structure-variables'].some(el => checkedScore.includes(el))){
+                return GRADE_GOOD
+            }
+
+            return GRADE_EXCE
+        }
+
+
 
 </script>
 

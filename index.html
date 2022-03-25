@@ -88,11 +88,11 @@
 
                     // Update UI and Output HTML
                     points.structure = evaulateStructureGrade(checkedScore)
+
                     PageUtils.updateFormColumnScore("structure", points.structure)
-
-                    // addCheckedItemsToList(checkedScore,structureFeedback,document.querySelector('ul.structure-out'))
-
                     PageUtils.updateOutputColumnScore()
+                    PageUtils.updateOutputColumnRequirements(checkedScore)
+                    PageUtils.updateHtmlOutput()
 
                     // updateOutputBody();
                 })
@@ -105,7 +105,7 @@
 
             // Update output feedback
             document.querySelector('textarea').addEventListener('change', function(e){
-                let columnId = e.target.id.split("_")
+                const columnId = e.target.id.split("_")
 
                 PageUtils.updateOutputColumnFeedback(columnId[0]);
             });
@@ -115,9 +115,9 @@
         class PageUtils {
             static updateOutputStudentName(name){
                 if(name === null || name.length === 0){
-                    document.querySelector('.html-output .student').textContent = "Student"
+                    document.querySelector('.rich-output .student').textContent = "Student"
                 } else {
-                    document.querySelector('.html-output .student').textContent = name
+                    document.querySelector('.rich-output .student').textContent = name
                 }
             }
 
@@ -177,6 +177,25 @@
                 }
             }
 
+            static updateOutputColumnRequirements(_checked){
+                if(_checked.length > 0 && _checked != null){
+                    let columnId = _checked[0].split("-")[0]
+
+                    console.log(`Column ID: ${columnId}`)
+
+                    let listItems = Array.from(document.querySelectorAll(`.${columnId}-output .output-list li`))
+
+                    listItems.forEach(_item => {
+                        if(_checked.includes(_item.className)){
+                            _item.style = `color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px` // TODO: Maybe storage these color values
+                            _item.getElementsByTagName("span")[0].style = `display: inline`
+                        } else {
+                            _item.style = `color: rgb(151, 151, 151); font-weight: normal; margin-top: 4px`
+                            _item.getElementsByTagName("span")[0].style = `display: none`
+                        }
+                    });
+                }
+            }
             
             /**
              * Updates additional feedback table with corresponding feedback from form.
@@ -196,7 +215,6 @@
                     document.querySelector(`.${_column}-output table`).style.display = "none"
                 }
             }
-
 
             static updateOutputColumnScore(){
                 Object.keys(points).forEach(_column => {
@@ -233,6 +251,12 @@
                     }
 
                 });
+            }
+
+            static updateHtmlOutput(){
+                let outputHtml = document.querySelector(".rich-output").innerHTML
+
+                document.querySelector(".html-output pre").textContent = outputHtml
             }
 
             // TODO: build collections of LIs for the Lists
@@ -278,7 +302,7 @@
     <main class="container">
         <div class="row">
             <section class="col l6 m12">
-                <h4>Grading</h4>
+                <h5>Grading</h5>
 
                 <div class="row">
                     <div class="input-field col s6">
@@ -415,28 +439,45 @@
 
             <section class="col l6 m12">
                 <h4>Output</h4>
-
-                <div class="html-output">
+                <h5>Rich Text</h5>
+                <div class="rich-output">
                     <p>
                         <span class="student">Student</span>,<br /><br />
                         <span class="status">Excellent work on this assignment!</span>
                     </p>
 
                     <div class="structure-output">
-                        <strong class="output-header">Structure and efficiency: <span style="color: rgb(206, 134, 0)">6.5/10</span></strong>
+                        <strong class="output-header">Structure and efficiency: <span>10/10</span></strong>
 
-                        <ul class="output-list">
+                        <!-- <ul class="output-list">
                             <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application is functional.</strong> ✓ </li>
                             <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application contains all required UI elements.</strong> ✓ </li>
                             <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>All XML views have descriptive IDs.</strong> ✓ </li>
                             <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>All methods, variables, and classes have descriptive names.</strong> ✓ </li>
                             <li style="color: rgb(74, 145, 57); margin-top: 4px"><strong>Application contains less than 10 non-lint Java warnings.</strong> ✓ </li>
                             <li style="color: rgb(151, 151, 151); margin-top: 4px">Application contains no non-lint Java warnings.</li>
-                        </ul>
+                        </ul> -->
 
-                        <table><tbody><tr><td><p>Your application contains 6 non-lint Java warnings for unused imports. Be sure to run <strong>Analyze -&gt; Inspect Code</strong> before turning in each assignment. You can watch the video below for some additional feedback, and let me know if you have any questions regarding this.</p></td></tr></tbody></table>    
+                        <ul class="output-list">
+                            <li class="structure-ids" style="color: rgb(151, 151, 151); margin-top: 4px">Application is functional. <span style="display: none;">✓</span></li>
+                            <li class="structure-variables" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains all required UI elements. <span style="display: none;">✓</span></li>
+                            <li class="structure-required" style="color: rgb(151, 151, 151); margin-top: 4px">All XML views have descriptive IDs. <span style="display: none;">✓</span></li>
+                            <li class="structure-warnings" style="color: rgb(151, 151, 151); margin-top: 4px">All methods, variables, and classes have descriptive names. <span style="display: none;">✓</span></li>
+                            <li class="structure-warnings10" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains less than 10 non-lint Java warnings. <span style="display: none;">✓</span></li>
+                            <li class="structure-nonfunctional" style="color: rgb(151, 151, 151); margin-top: 4px">Application contains no non-lint Java warnings. <span style="display: none;">✓</span></li>
+                        </ul>
+                        
+                        <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>    
+
+
+                        <!-- <table><tbody><tr><td><p>Your application contains 6 non-lint Java warnings for unused imports. Be sure to run <strong>Analyze -&gt; Inspect Code</strong> before turning in each assignment. You can watch the video below for some additional feedback, and let me know if you have any questions regarding this.</p></td></tr></tbody></table>     -->
                     </div>
 
+                </div>
+
+                <h5>HTML</h5>
+                <div class="html-output">
+                    <pre></pre>
                 </div>
             </section>
         </div>

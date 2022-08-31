@@ -36,23 +36,29 @@
         // Note: These keys define keys used throughout the document
         let points = {
             "structure" : "",
-            "ui" : "",
-            "design" : "",
+            "form" : "",
+            "save" : "",
+            "details" : "",
+            "delete" : "",
         };
 
         // Total points available for each column
         // Total value = 100
         const POINTS_VALUES = {
             "structure" : 10,
-            "ui" :  60,
-            "design" : 30,
+            "form" : 15,
+            "save" : 30,
+            "details" : 25,
+            "delete" : 20,
         }
 
         // "d" values for the SVG paths of the output headers
         const ICONS = {
-            "structure" : `M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M9 17H7V10H9V17M13 17H11V7H13V17M17 17H15V13H17V17Z`,
-            "ui" : `M19,18H5V6H19M21,4H3C1.89,4 1,4.89 1,6V18A2,2 0 0,0 3,20H21A2,2 0 0,0 23,18V6C23,4.89 22.1,4 21,4M7,8H13V13H7V8M14,8H17V10H14V8M17,11V16H14V11H17M7,14H13V16H7V14Z`,
-            "design" : `M3,5H9V11H3V5M5,7V9H7V7H5M11,7H21V9H11V7M11,15H21V17H11V15M5,20L1.5,16.5L2.91,15.09L5,17.17L9.59,12.59L11,14L5,20Z`
+            "structure" : "M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M9 17H7V10H9V17M13 17H11V7H13V17M17 17H15V13H17V17Z",
+            "form" : "M15 5H18L16.5 7L15 5M5 2H19C20.11 2 21 2.9 21 4V20C21 21.11 20.11 22 19 22H5C3.9 22 3 21.11 3 20V4C3 2.9 3.9 2 5 2M5 4V8H19V4H5M5 20H19V10H5V20M7 12H17V14H7V12M7 16H17V18H7V16Z",
+            "save" : "M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z",
+            "details" : "M5,9.5L7.5,14H2.5L5,9.5M3,4H7V8H3V4M5,20A2,2 0 0,0 7,18A2,2 0 0,0 5,16A2,2 0 0,0 3,18A2,2 0 0,0 5,20M9,5V7H21V5H9M9,19H21V17H9V19M9,13H21V11H9V13Z",
+            "delete" : "M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8.46,11.88L9.87,10.47L12,12.59L14.12,10.47L15.53,11.88L13.41,14L15.53,16.12L14.12,17.53L12,15.41L9.88,17.53L8.47,16.12L10.59,14L8.46,11.88M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z",
         }
 
         let checkedScore = []
@@ -84,8 +90,10 @@
 
                     // Update UI and Output HTML
                     points.structure = evaluateStructureGrade(checkedScore)
-                    points.ui = evaluateUiGrade(checkedScore)
-                    points.design = evaluateDesignGrade(checkedScore)
+                    points.form = evaluateFormGrade(checkedScore)
+                    points.save = evaluateSaveGrade(checkedScore)
+                    points.details = evaluateDetailsGrade(checkedScore)
+                    points.delete = evaluateDeleteGrade(checkedScore)
 
                     PageUtils.updateFormColumnScore()
                     PageUtils.updateOutputColumnScore()
@@ -249,6 +257,7 @@
 
                         if(scoreElement != null){
                             // Set the score to X out of Y points
+
                             scoreElement.textContent = `${points[_column] * POINTS_VALUES[_column]}/${POINTS_VALUES[_column]}`
                             
                             // Select the RGB color value that corresponds with point percentage
@@ -270,6 +279,8 @@
                                     scoreElement.style = `color: ${VALUE_COLORS.exce}`
                                     break
                             }
+                        } else {
+                            console.log("Cound not found scoreElement for " + _column)
                         }
                     }
                 });
@@ -378,32 +389,56 @@
             return GRADE_EXCE
         }
 
-        function evaluateUiGrade(){
-            if(['ui-functional', 'ui-required'].some(el => checkedScore.includes(el))){
+        function evaluateFormGrade(){
+            if(['form-intent'].some(el => checkedScore.includes(el))){
                 return GRADE_POOR
             }
 
-            if(['ui-icons', 'ui-visibility'].some(el => checkedScore.includes(el))){
+            if(['form-data', 'form-icon'].every(el => checkedScore.includes(el))){
                 return GRADE_FAIR
             }
 
-            if(['ui-layouts', 'ui-icons-aligned'].some(el => checkedScore.includes(el))){
+            if(['form-data', 'form-icon'].some(el => checkedScore.includes(el))){
                 return GRADE_GOOD
             }
 
             return GRADE_EXCE
         }
 
-        function evaluateDesignGrade(){
-            if(['design-functional', 'design-required'].some(el => checkedScore.includes(el))){
+        function evaluateSaveGrade(){
+            if(['save-save'].some(el => checkedScore.includes(el))){
                 return GRADE_POOR
             }
 
-            if(['design-images'].some(el => checkedScore.includes(el))){
+            if(['save-button'].some(el => checkedScore.includes(el))){
+                return GRADE_GOOD
+            }
+
+            return GRADE_EXCE
+        }
+
+        function evaluateDetailsGrade(){
+            if(['details-open'].some(el => checkedScore.includes(el))){
+                return GRADE_POOR
+            }
+
+            if(['details-icon', 'details-data'].every(el => checkedScore.includes(el))){
                 return GRADE_FAIR
             }
 
-            if(['design-dp', 'design-sp'].some(el => checkedScore.includes(el))){
+            if(['details-data', 'details-icon'].some(el => checkedScore.includes(el))){
+                return GRADE_GOOD
+            }
+
+            return GRADE_EXCE
+        }
+
+        function evaluateDeleteGrade(){
+            if(['delete-intent'].some(el => checkedScore.includes(el))){
+                return GRADE_POOR
+            }
+
+            if(['delete-button'].some(el => checkedScore.includes(el))){
                 return GRADE_GOOD
             }
 
@@ -445,7 +480,7 @@
                 </div>
 
                 <div class="section">
-                    <h5>Code Exercise 01: Layouts</h5>
+                    <h5>Code Exercise 07: Implicit Intents</h5>
 
                     <!-- Rubric column evaluations -->
                     <ul class="collapsible">
@@ -492,91 +527,114 @@
                                 <label for="structure_comment">Additional Comments</label>
                             </div>
                         </li>
-                        <li class="ui">
+                        <li class="form">
                             <div class="collapsible-header">
                                 <i class="material-icons">space_dashboard</i>
-                                User Interface
+                                Form Screen
 
-                                <span class="score excellent" data-ui-score="60">60/60</span>
+                                <span class="score excellent" data-form-score="15">15/15</span>
                             </div>
 
                             <div class="collapsible-body">
-                                <!-- Good -->
+                                <!-- Fair -->
                                 <label>
-                                    <input type="checkbox" value="ui-layouts" />
-                                    <span>Both layouts are not identical</span>
-                                </label><br />
-
-                                <label>
-                                    <input type="checkbox" value="ui-icons-aligned"/>
-                                    <span>Icons not aligned correctly</span>
+                                    <input type="checkbox" value="form-data"/>
+                                    <span>The form screen does not allow the user to enter data</span>
                                 </label><br />
 
                                 <!-- Fair -->
                                 <label>
-                                    <input type="checkbox" value="ui-icons"/>
-                                    <span>No Section Icons</span>
-                                </label><br />
-
-                                <!-- Fair -->
-                                <label>
-                                    <input type="checkbox" value="ui-visiblility"/>
-                                    <span>Both Layouts visible</span>
+                                    <input type="checkbox" value="form-icon"/>
+                                    <span>Form screen is visible in the app drawer</span>
                                 </label><br />
 
                                 <!-- Poor -->
                                 <label>
-                                    <input type="checkbox" value="ui-required"/>
-                                    <span>Missing Required Elements</span>
+                                    <input type="checkbox" value="form-intent" />
+                                    <span>Form screen does not open via an implicit intent</span>
                                 </label><br />
 
-                                <label>
-                                    <input type="checkbox" value="ui-functional"/>
-                                    <span>Non-functional</span>
-                                </label><br />
-
-                                <textarea id="ui_comment" class="materialize-textarea"></textarea>
-                                <label for="ui_comment">Additional Comments</label>
+                                <textarea id="form_comment" class="materialize-textarea"></textarea>
+                                <label for="form_comment">Additional Comments</label>
                             </div>
                         </li>
-                        <li class="design">
+                        <li class="save">
                             <div class="collapsible-header">
-                                <i class="material-icons">rule</i>
-                                Design Standards
+                                <i class="material-icons">save</i>
+                                Saving Data
 
-                                <span class="score excellent" data-design-score="30">30/30</span>
+                                <span class="score excellent" data-save-score="30">30/30</span>
                             </div>
                             <div class="collapsible-body">
                                 <!-- Good -->
                                 <label>
-                                    <input type="checkbox" value="design-dp" />
-                                    <span>Views do not use DP units.</span>
-                                </label><br />
-
-                                <label>
-                                    <input type="checkbox" value="design-sp"/>
-                                    <span>Text does not use SP units.</span>
-                                </label><br />
-
-                                <!-- Fair -->
-                                <label>
-                                    <input type="checkbox" value="design-images"/>
-                                    <span>Images filesize too big, too small, or cropped incorrectly.</span>
+                                    <input type="checkbox" value="save-button"/>
+                                    <span>Application does not utilize ActionBar menu item.</span>
                                 </label><br />
 
                                 <!-- Poor -->
                                 <label>
-                                    <input type="checkbox" value="design-required"/>
-                                    <span>Missing Required Elements</span>
+                                    <input type="checkbox" value="save-save"/>
+                                    <span>Application does not pass appropriate data back to list</span>
+                                </label><br />
+
+                                <textarea id="save_comment" class="materialize-textarea"></textarea>
+                                <label for="save_comment">Additional Comments</label>
+                            </div>
+                        </li>
+                        <li class="details">
+                            <div class="collapsible-header">
+                                <i class="material-icons">list</i>
+                                Detail Screen
+
+                                <span class="score excellent" data-details-score="25">25/25</span>
+                            </div>
+                            <div class="collapsible-body">
+                                <!-- Good -->
+                                <!-- Fair -->
+                                <label>
+                                    <input type="checkbox" value="details-icon"/>
+                                    <span>Details screen Activity appear in launher drawer</span>
                                 </label><br />
 
                                 <label>
-                                    <input type="checkbox" value="design-functional"/>
-                                    <span>Non-functional</span>
+                                    <input type="checkbox" value="details-data"/>
+                                    <span>Details screen UI does not show appropriate data</span>
                                 </label><br />
 
-                                <textarea id="design_comment" class="materialize-textarea"></textarea>
-                                <label for="design_comment">Additional Comments</label>
+                                <!-- Poor -->
+                                <label>
+                                    <input type="checkbox" value="details-open"/>
+                                    <span>Details screen does not successfully open</span>
+                                </label><br />
+
+                                <textarea id="details_comment" class="materialize-textarea"></textarea>
+                                <label for="details_comment">Additional Comments</label>
+                            </div>
+                        </li>
+                        <li class="delete">
+                            <div class="collapsible-header">
+                                <i class="material-icons">delete</i>
+                                Deleting Data
+
+                                <span class="score excellent" data-delete-score="20">20/20</span>
+                            </div>
+                            <div class="collapsible-body">
+                                <!-- Good -->
+                                <!-- Fair -->
+                                <label>
+                                    <input type="checkbox" value="delete-button"/>
+                                    <span>Application does not utilize ActionBar menu item.</span>
+                                </label><br />
+
+                                <!-- Poor -->
+                                <label>
+                                    <input type="checkbox" value="delete-intent"/>
+                                    <span>Details screen does not properly trigger a delete operation.</span>
+                                </label><br />
+
+                                <textarea id="delete_comment" class="materialize-textarea"></textarea>
+                                <label for="delete_comment">Additional Comments</label>
                             </div>
                         </li>
                     </ul>
@@ -617,30 +675,46 @@
                         <table style="display: none; margin-bottom: 12px;"><tbody><tr><td><p></p></td></tr></tbody></table>
                     </div><!-- Column Output End -->
 
-                    <div class="ui-output"><!-- Column Output Start -->
-                        <strong class="output-header">User Interface: <span>60/60</span></strong>
+                    <div class="form-output"><!-- Column Output Start -->
+                        <strong class="output-header">Form Screen: <span>15/15</span></strong>
 
                         <ul class="output-list">
-                            <li class="ui-functional" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Application is functional. <span style="display: inline;">✓</span></li>
-                            <li class="ui-required" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Application contains all required UI elements. <span style="display: inline;">✓</span></li>
-                            <li class="ui-layouts" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Both Linear and Constraint layouts are identical. <span style="display: inline;">✓</span></li>
-                            <li class="ui-visiblility" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Only one layout is visible at a time. <span style="display: inline;">✓</span></li>
-                            <li class="ui-icons" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Each section has a related content icon. <span style="display: inline;">✓</span></li>
-                            <li class="ui-icons-aligned" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Section icons are properly align with the top of the section. <span style="display: inline;">✓</span></li>
+                            <li class="form-intent" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The form screen successfully opens via the proper implicit <code>Intent</code>. <span style="display: inline;">✓</span></li>
+                            <li class="form-icon" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The form screen <code>Activity</code> does not appear in the application launder drawer. <span style="display: inline;">✓</span></li>
+                            <li class="form-data" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The form screen UI allows the user to enter in the three points of data of the appropriate types. <span style="display: inline;">✓</span></li>                        </ul>
+                        
+                        <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>
+                    </div><!-- Column Output End -->
+
+                    <div class="save-output"><!-- Column Output Start -->
+                        <strong class="output-header">Saving Data: <span>30/30</span></strong>
+
+                        <ul class="output-list">
+                            <li class="save-save" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The form screen passes the appropriate data back to the list using the appropriate intent extras. <span style="display: inline;">✓</span></li>
+                            <li class="save-button" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The fom screen contains an ActionBar or Toolbar menu item that, when pressed, passes the appropriate data. <span style="display: inline;">✓</span></li>
                         </ul>
                         
                         <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>
                     </div><!-- Column Output End -->
 
-                    <div class="design-output"><!-- Column Output Start -->
-                        <strong class="output-header">Design Standards: <span>30/30</span></strong>
+                    <div class="details-output"><!-- Column Output Start -->
+                        <strong class="output-header">Details Screen: <span>25/25</span></strong>
 
                         <ul class="output-list">
-                            <li class="design-functional" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Application is functional. <span style="display: inline;">✓</span></li>
-                            <li class="design-required" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Application contains all required UI elements. <span style="display: inline;">✓</span></li>
-                            <li class="design-images" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Images are appropriately resized and/or cropped. <span style="display: inline;">✓</span></li>
-                            <li class="design-dp" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">All views utilize <abbr title="Densisity-independant pixels">DP</abbr> units for sizing. <span style="display: inline;">✓</span></li>
-                            <li class="design-sp" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Text utilizes <abbr title="Scale-independant pixels">SP</abbr> units for sizing. <span style="display: inline;">✓</span></li>
+                            <li class="details-data" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The details screen UI shows the three points of data as associated with the item selected on the list screen. <span style="display: inline;">✓</span></li>
+                            <li class="details-icon" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The details screen does not appear in the application launcher drawer. <span style="display: inline;">✓</span></li>
+                            <li class="details-open" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The details screen successfully opens via the proper implicit intent action. <span style="display: inline;">✓</span></li>
+                        </ul>
+                        
+                        <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>
+                    </div><!-- Column Output End -->
+
+                    <div class="delete-output"><!-- Column Output Start -->
+                        <strong class="output-header">Deleting Data: <span>25/25</span></strong>
+
+                        <ul class="output-list">
+                            <li class="delete-intent" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">The details screen passes the appropriate data back to the list screen using the appropriate intent extras so that data can be deleted and removed from the list screen. <span style="display: inline;">✓</span></li>
+                            <li class="delete-button" style="color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px">Details screen contains an ActionBar or Toolbar menu item that, when pressed, passes the appropriate intent. <span style="display: inline;">✓</span></li>
                         </ul>
                         
                         <table style="display: none;"><tbody><tr><td><p></p></td></tr></tbody></table>

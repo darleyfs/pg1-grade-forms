@@ -37,10 +37,14 @@
     color: var(--foreground-excellent-color)
 }
 
-.html-output {
+.html-output, .rich-output {
     border: 1px solid #eee;
     padding: 16px;
     border-radius: 5px;
+}
+
+pre {
+    white-space: pre-wrap;
 }
 
 table {

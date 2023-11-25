@@ -20,6 +20,7 @@
     <script type="text/javascript">
         /* 
         TODO: Add toggles for dynamic penaltys
+        TODO: Section comments are busted
         */
 
         const TESTS = [
@@ -250,8 +251,6 @@
 
                     // Update the page HTML
                     PageUtils.updateFeedback(checkedScore, points, GRADE_WEIGHTS, POINTS_VALUES)
-
-                    console.log(points)
                 });
             });
 
@@ -276,7 +275,7 @@
 
             textareas.forEach(_textarea => {
                 _textarea.addEventListener('change', function(e){
-                    const columnId = e.target.id.split("_")
+                    const columnId = e.target.id.split("-")
 
                     PageUtils.updateOutputColumnFeedback(columnId[0]);
                 });
@@ -286,7 +285,7 @@
                 PageUtils.copyOutputHtml()
             });
 
-            // PageUtils.insertSvgHeaderIcons(ICONS)
+            //PageUtils.insertSvgHeaderIcons(ICONS, points)
 
         });
 
@@ -437,7 +436,7 @@
              * @param {string} _column ID of corresponding rubric column
              */
             static updateOutputColumnFeedback(_column){
-                const comment = document.querySelector(`.${_column} #${_column}_comment`).value
+                const comment = document.querySelector(`.${_column} #${_column}-comment`).value
 
                 if(comment.length > 0){
                     document.querySelector(`.${_column}-output table`).style.display = "table"
@@ -505,8 +504,8 @@
              * Generates an SVG from the pathes store in ICONS. Loops through the keys of points, and adds
              * the SVG to the header of the column output.
              * */
-            static insertSvgHeaderIcons(_icons){
-                Object.keys(points).forEach(_column => {
+            static insertSvgHeaderIcons(_icons, _points){
+                Object.keys(_points).forEach(_column => {
                     const SVG = document.createElementNS("http://www.w3.org/2000/svg", "svg")
                     SVG.style.width = "24px"
                     SVG.style.height = "24px"
@@ -637,12 +636,12 @@
 
                 // Create textarea element with id "t01_comment" and class "materialize-textarea"
                 const textareaElement = document.createElement('textarea');
-                textareaElement.setAttribute('id', id + '_comment');
+                textareaElement.setAttribute('id', id + '-comment');
                 textareaElement.classList.add('materialize-textarea');
 
                 // Create label element for textarea
                 const textareaLabel = document.createElement('label');
-                textareaLabel.setAttribute('for', id + '_comment');
+                textareaLabel.setAttribute('for', id + '-comment');
                 textareaLabel.textContent = 'Additional Comments';
 
                 // Append textarea and label elements to bodyDiv

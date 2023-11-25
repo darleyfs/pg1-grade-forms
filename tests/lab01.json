@@ -1,0 +1,95 @@
+[
+    {   
+        "name" : "Test 1",
+        "value" : 10,
+        "requirements" : [ 
+            {
+                "name" : "Hello World",
+                "requirement" : "Application correctly displays \"Hello Full Sail\" in the console",
+                "inverse" : "Application does not print \"Hello World\"."
+            }
+        ]
+
+    },
+    {
+        "name" : "Test 2",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Prompt for Name",
+            "requirement" : "Application prompts the user for their name.",
+            "inverse" : "Application does not prompt user for name."
+            }]
+    },
+    {
+        "name" : "Test 3",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Store Name",
+            "requirement" : "Application accepts the user's name and stores it as a string.",
+            "inverse" : "Application does not accept the user's name and store it as a string."
+        }]
+    },
+    {
+        "name" : "Test 4",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Prompt for Age",
+            "requirement" : "Application prompts user for their age.",
+            "inverse" : "Application does not prompt user for their age."
+        }]
+    },
+    {
+        "name" : "Test 5",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Store Age",
+            "requirement" : "Application accepts the user's age and stores it as a string.",
+            "inverse" : "Application does not accept the user's age and stored it as a string."
+        }]
+    },
+    {
+        "name" : "Test 6",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Congratulate User",
+            "requirement" : "Application congratulates the user for their age using their name.",
+            "inverse" : "Application does not congratulate the user for their age using their name."
+        }]
+    },
+    {
+        "name" : "Test 7",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Submit Project",
+            "requirement" : "A zipped folder containing Lab 1 Solution file and project files has been uploaded to FSO.",
+            "inverse" : "A zipped folder containing Lab 1 Solution file and project files has not been uploaded to FSO."
+        }]
+    },
+    {
+        "name" : "Test 8",
+        "value" : 20,
+        "requirements" : [{
+            "name" : "Join Discord Server",
+            "requirement" : "PG1 group Discord has been joined.",
+            "inverse" : "PG1 group Discord has not been joined."
+        }]
+    },
+    {
+        "name" : "Test 9",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Post in Discussion Board",
+            "requirement" : "Introduction has been posted on FSO in the Lesson Notes discussion board for Week 1.",
+            "inverse" : "Introduction has not been posted on FSO in the Lesson Notes discussion board for Week 1."
+        }]
+    },
+    {
+        "name" : "Test 10",
+        "value" : 0,
+        "requirements" : [{
+            "name" : "Complete Two-Strike document",
+            "requirement" : "Two-Strike document has been completed.",
+            "inverse" : "Two-Strike document has not been completed."
+        }]
+    }
+]

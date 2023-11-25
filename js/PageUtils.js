@@ -6,10 +6,9 @@ const VALUE_COLORS = {
     "exce" : "rgb(0, 199, 199)"
 }
 
-class PageUtils {
-
+export class PageUtils {
     static updateFeedback(_checkedScore, _points, _gradeWeights, _pointsValues){
-        
+
         // Retrieve overall grade
         let grade = PageUtils.getOverallGrade(_points, _pointsValues)
         
@@ -45,6 +44,25 @@ class PageUtils {
         }
     }
 
+    static getIntroStatus(_grade){
+        let status = ""
+        
+        switch(true){
+            case (_grade > 92):
+                status = "Excellent job on this assignment!"
+                break;
+            case (_grade > 80):
+                status = "Great job on this assignment!"
+                break;
+            case (_grade > 69):
+                status = "Good job on this assignment."
+                break;
+            default: 
+                status = "Good work on this assignment."
+        }
+        return status
+    }
+
     static updateVideoUrlEmbed(_url){
         if(_url !== null && _url.length > 0){
             let youtubeEmbed = "";
@@ -70,7 +88,7 @@ class PageUtils {
      * @param {string} _column Rubric column being evaluated
      * @param {number} _points Field of the points object that corresponds with the rubric column
      */
-    static updateFormColumnScore(_gradeWeights, _pointsValues, _points){
+     static updateFormColumnScore(_gradeWeights, _pointsValues, _points){
         Object.keys(_points).forEach(_column => {
 
             if(_points[_column] != null){
@@ -107,18 +125,16 @@ class PageUtils {
     }
 
     static updateOutputColumnRequirements(_checked){
-        console.log(_checked);
-
         if(_checked.length > 0 && _checked != null){
             const listItems = Array.from(document.querySelectorAll(`.output-list li`))
 
             listItems.forEach(_item => {
                 if(_checked.includes(_item.className)){
                     _item.style = `color: rgb(151, 151, 151); font-weight: normal; margin-top: 4px`
-                    _item.getElementsByTagName("span")[0].style = `display: none`
+                    _item.getElementsByTagName("span")[1].style = `display: none`
                 } else {
                     _item.style = `color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px` // TODO: Maybe storage these color values
-                    _item.getElementsByTagName("span")[0].style = `display: inline`
+                    _item.getElementsByTagName("span")[1].style = `display: inline`
                 }
             })
         } else {
@@ -130,16 +146,6 @@ class PageUtils {
             })
         }
     }
-
-    static updatePenalties(_checked, _penalities){
-        if(_checked.length > 0 && _penalities.length > 0 && _checked != null && _penalities != null){
-            _penalities.forEach(function(_penalty){
-                if(_checked.includes(_penalty.id)){
-
-                }
-            })
-        }
-    }
     
     /**
      * Updates additional feedback table with corresponding feedback from form.
@@ -147,7 +153,7 @@ class PageUtils {
      * @param {string} _column ID of corresponding rubric column
      */
     static updateOutputColumnFeedback(_column){
-        const comment = document.querySelector(`.${_column} #${_column}_comment`).value
+        const comment = document.querySelector(`.${_column} #${_column}-comment`).value
 
         if(comment.length > 0){
             document.querySelector(`.${_column}-output table`).style.display = "table"
@@ -210,12 +216,13 @@ class PageUtils {
         document.querySelector('.grade').textContent = _grade
     }
 
+
     /**
      * Generates an SVG from the pathes store in ICONS. Loops through the keys of points, and adds
      * the SVG to the header of the column output.
      * */
-    static insertSvgHeaderIcons(_icons){
-        Object.keys(points).forEach(_column => {
+    static insertSvgHeaderIcons(_icons, _points){
+        Object.keys(_points).forEach(_column => {
             const SVG = document.createElementNS("http://www.w3.org/2000/svg", "svg")
             SVG.style.width = "24px"
             SVG.style.height = "24px"
@@ -250,25 +257,6 @@ class PageUtils {
         return id;
     }
 
-    static getIntroStatus(_grade){
-        let status = ""
-        
-        switch(true){
-            case (_grade > 92):
-                status = "Excellent job on this assignment!"
-                break;
-            case (_grade > 80):
-                status = "Great job on this assignment!"
-                break;
-            case (_grade > 69):
-                status = "Good job on this assignment."
-                break;
-            default: 
-                status = "Good work on this assignment."
-        }
-        return status
-    }
-
     static copyOutputHtml() {
         console.log("Click!")
 
@@ -289,6 +277,6 @@ class PageUtils {
             grade += _points[_column] * _pointsValues[_column]
         })
 
-        return grade;
+        return (grade > 0) ? grade : 0;
     }
 }

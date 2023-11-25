@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" type="text/css" />
+
+    <script type="text/javascript">
+        /* 
+        TODO: Add toggles for dynamic penaltys
+        TODO: Section comments are busted
+        */
+
+        const TESTS = [
+            {   
+                "name" : "Test 1",
+                "value" : 10,
+                "requirements" : [ 
+                    {
+                        "name" : "Fix Errors",
+                        "requirement" : "All errors in the Debugging Exercise project have been corrected.",
+                        "inverse" : "The Debugging Exercise project contains unresolved errors."
+                    }
+                ]
+            },
+            {
+                "name" : "Test 2",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "Debugging Document",
+                    "requirement" : "The debugging questionnaire has been completed.",
+                    "inverse" : "The debugging questionnaire has not been completed correctly."
+                    }]
+            },
+            {
+                "name" : "Test 3",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "String to Int",
+                    "requirement" : "The stoi() method was used to convert string input to an integer.",
+                    "inverse" : "The stoi() method was not used to convert string input to an integer.",
+                }]
+            },
+            {
+                "name" : "Test 4",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "String to Double",
+                    "requirement" : "The stod() method was used to convert string input to a double.",
+                    "inverse" : "The stod() method was not used to convert string input to a double.",
+                }]
+            },
+            {
+                "name" : "Test 5",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "String to Float",
+                    "requirement" : "The stof() method was used to convert string input to a float.",
+                    "inverse" : "The stod() method was not used to convert string input to a float.",
+                }]
+            },
+            {
+                "name" : "Test 6",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "String to Unsigned Integer",
+                    "requirement" : "The stoul() method was used to convert string input to an unsigned integer.",
+                    "inverse" : "The stoul() method was used to convert string input to an unsigned integer."
+                }]
+            },
+            {
+                "name" : "Test 7",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "String to Unsigned Long",
+                    "requirement" : "The stoull() method was used to convert string input to an unsigned long.",
+                    "inverse" : "The stoull() method was used to convert string input to an unsigned long.",
+                }]
+            },
+            {
+                "name" : "Test 8",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "Cast Double to Float",
+                    "requirement" : "Double input value converted to float using a cast.",
+                    "inverse" : "Double input value was not converted to float using a cast.",
+                }]
+            },
+            {
+                "name" : "Test 9",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "Cast Float to Int",
+                    "requirement" : "Float input value converted to an integer using a cast.",
+                    "inverse" : "Float input value was not converted to an integer using a cast.",
+                }]
+            },
+            {
+                "name" : "Test 10",
+                "value" : 10,
+                "requirements" : [{
+                    "name" : "Integer to String",
+                    "requirement" : "Integer input value converted to a string using the to_string() method.",
+                    "inverse" : "Integer input value was not converted to a string using the to_string() method.",
+                }]
+            }
+        ]
+
+        const PENALTIES = [
+            {
+                "name" : "-10pts Multiple returns",
+                "id" : "multiple-returns",
+                "description" : "One or more methods contains multiple return statements.",
+                "value" : -10,
+            },
+            {
+                "name" : "-10pts Descriptive comments",
+                "id" : "descriptive-comments",
+                "description" : "One or more methods or code blocks do not contain descriptive comments.",
+                "value" : -10,
+            },    
+            {
+                "name" : "-10pts Late work",
+                "id" : "late-work",
+                "description" : "Late work penalty.",
+                "value" : -10,
+            },
+            {
+                "name" : "0 No submission",
+                "id" : "no-sub",
+                "description" : "Project was not submitted",
+                "value" : -100,
+            },
+            {
+                "name" : "0 Invalid submission",
+                "id" : "invalid-sub",
+                "description" : "This project was not submitted properly. As a reminder, the assignment submission should be a compressed ZIP folder that contains the project Solution (.sln) file as well as the associated project folders and files.",
+                "value" : -100,
+            },
+            {
+                "name" : "0 Pointers, const, and/or auto",
+                "id" : "pointers-const-auto",
+                "description" : "This project contains C++ pointers, the const keyword, and/or the auto data type. As a reminder, the Course Overview for this course explicitly states that these concepts may not be used.",
+                "value" : -100,
+            },
+            {
+                "name" : "0 Outside sources",
+                "id" : "outside-sources",
+                "description" : "This submission contains concepts not covered within Programming 1. As a reminder, the Course Overview for this course explicitly states that concepts, methods, or practices outside of the course's scope may not be used without instructor approval.",
+                "value" : -100,
+            },
+            {
+                "name" : "0 Generated code",
+                "id" : "chat-gpt",
+                "description" : "This submission contains concepts not covered within Programming 1. As a reminder, the instructions for this lab explicitly state that external resources can not be used to complete this assignment. Furthermore, these patterns are consistent with those generated by automatic code creation tools such as large language learning models. The use of such tools is not permitted within this course.\nAs a result, you will receive a 0 for this assignment and your professionalism. In addition, the student conduct team will reach out to you shortly. Any further communications regarding this matter must involve the student conduct team.",
+                "value" : -100
+            }
+        ]
+
+        // Grade values
+        const GRADE_WEIGHTS = {
+            "POOR" : 0,
+            "FAIR" : 0.45,
+            "GOOD" : 0.80,
+            "EXCE" : 1
+        }
+
+        // Colors corresponding with grade values
+        const VALUE_COLORS = {
+            "poor" : "rgb(161, 0, 0)",
+            "fair" : "rgb(206, 134, 0)",
+            "good" : "rgb(0, 194, 0)",
+            "exce" : "rgb(0, 199, 199)"
+        }
+
+        // "d" values for the SVG paths of the output headers
+        const ICONS = {
+            "test_1_id" : `M1.5,4V5.5C1.5,9.65 3.71,13.28 7,15.3V20H22V18C22,15.34 16.67,14 14,14C14,14 13.83,14 13.75,14C9,14 5,10 5,5.5V4M14,4A4,4 0 0,0 10,8A4,4 0 0,0 14,12A4,4 0 0,0 18,8A4,4 0 0,0 14,4Z`,
+            "test_2_id" : `M13,19V16H21V19H13M8.5,13L2.47,7H6.71L11.67,11.95C12.25,12.54 12.25,13.5 11.67,14.07L6.74,19H2.5L8.5,13Z`,
+            "test_3_id" : `M17 3H5C3.9 3 3 3.9 3 5V19C3 20.11 3.9 21 5 21H11.81C11.42 20.34 11.17 19.6 11.07 18.84C9.5 18.31 8.66 16.6 9.2 15.03C9.61 13.83 10.73 13 12 13C12.44 13 12.88 13.1 13.28 13.29C15.57 11.5 18.83 11.59 21 13.54V7L17 3M15 9H5V5H15V9M15.75 21L13 18L14.16 16.84L15.75 18.43L19.34 14.84L20.5 16.25L15.75 21`,
+            "test_4_id" : `M13,19V16H21V19H13M8.5,13L2.47,7H6.71L11.67,11.95C12.25,12.54 12.25,13.5 11.67,14.07L6.74,19H2.5L8.5,13Z`,
+            "test_5_id" : `M17 3H5C3.9 3 3 3.9 3 5V19C3 20.11 3.9 21 5 21H11.81C11.42 20.34 11.17 19.6 11.07 18.84C9.5 18.31 8.66 16.6 9.2 15.03C9.61 13.83 10.73 13 12 13C12.44 13 12.88 13.1 13.28 13.29C15.57 11.5 18.83 11.59 21 13.54V7L17 3M15 9H5V5H15V9M15.75 21L13 18L14.16 16.84L15.75 18.43L19.34 14.84L20.5 16.25L15.75 21`,
+            "test_6_id" : `M14.53 1.45L13.45 2.53L15.05 4.13C15.27 4.38 15.38 4.67 15.38 5S15.27 5.64 15.05 5.86L11.5 9.47L12.5 10.55L16.13 6.94C16.66 6.35 16.92 5.7 16.92 5C16.92 4.3 16.66 3.64 16.13 3.05L14.53 1.45M10.55 3.47L9.47 4.55L10.08 5.11C10.3 5.33 10.41 5.63 10.41 6S10.3 6.67 10.08 6.89L9.47 7.45L10.55 8.53L11.11 7.92C11.64 7.33 11.91 6.69 11.91 6C11.91 5.28 11.64 4.63 11.11 4.03L10.55 3.47M21 5.06C20.31 5.06 19.67 5.33 19.08 5.86L13.45 11.5L14.53 12.5L20.11 6.94C20.36 6.69 20.66 6.56 21 6.56S21.64 6.69 21.89 6.94L22.5 7.55L23.53 6.47L22.97 5.86C22.38 5.33 21.72 5.06 21 5.06M7 8L2 22L16 17L7 8M19 11.06C18.3 11.06 17.66 11.33 17.06 11.86L15.47 13.45L16.55 14.53L18.14 12.94C18.39 12.69 18.67 12.56 19 12.56C19.33 12.56 19.63 12.69 19.88 12.94L21.5 14.53L22.55 13.5L20.95 11.86C20.36 11.33 19.7 11.06 19 11.06Z`,
+            "test_7_id" : `M14,13V17H10V13H7L12,8L17,13M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z`,
+            "test_8_id" : `M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4C22,2.89 21.1,2 20,2Z`,
+            "test_9_id" : `M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z`,
+            "test_10_id" : `M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z`
+        }
+
+        let checkedScore = []
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let output;
+
+            // Intializers
+
+            // Earned point values for rubric columns
+            let points = TestBuilder.buildPointsObject(TESTS);
+
+            // Total points available for each column
+            const POINTS_VALUES = TestBuilder.buildTestValuesObject(TESTS);
+
+            var elems = document.querySelectorAll('select')
+            var instances = M.FormSelect.init(elems, null)
+
+            var elems = document.querySelectorAll('.collapsible')
+            var instances = M.Collapsible.init(elems, null)
+
+            TestBuilder.buildRequirements(TESTS);
+            TestBuilder.buildPenalties(PENALTIES);
+            TestBuilder.buildTestResults(TESTS);
+
+            // Checkboxes
+            var checkboxes = document.querySelectorAll("input[type=checkbox]")
+
+            // Use Array.forEach to add an event listener to each checkbox.
+            checkboxes.forEach(function (_checkbox) {
+                _checkbox.addEventListener('change', function(){
+                    checkedScore =
+                        Array.from(checkboxes)          // Convert checkboxes to an array to use filter and map.
+                            .filter(i => i.checked)     // Use Array.filter to remove unchecked checkboxes.
+                            .map(i => i.value)          // Use Array.map to extract only the checkbox values from the array of objects.
+
+                            console.log(`Checked changed!\n${checkedScore}`)
+
+
+                    let i = 0;
+
+                    // Check all of the tests and apply the points
+                    for(const key in points){
+
+                        // This is super sloppy but a temporary fix
+                        points[key] = evaluateTest(key, TESTS[i].requirements);
+                        i++;
+
+                        // points[key] = evaluateTest(key);
+                    }
+
+                    // Update the page HTML
+                    PageUtils.updateFeedback(checkedScore, points, GRADE_WEIGHTS, POINTS_VALUES)
+                });
+            });
+
+            // Update output student name
+            document.querySelector('#student_name').addEventListener('change', function(e){
+                PageUtils.updateOutputStudentName(e.target.value)
+            })
+
+            // Update output student name
+            document.querySelector('#intro_statement').addEventListener('change', function(e){
+                PageUtils.updateIntroductionStatement(e.target.value)
+            })
+
+
+            // Update embedded feedback video
+            document.querySelector('#video_url').addEventListener('change', function(e){
+                PageUtils.updateVideoUrlEmbed(e.target.value)
+            })
+
+            // Update textarea feedback
+            let textareas = Array.from(document.getElementsByTagName('textarea'))
+
+            textareas.forEach(_textarea => {
+                _textarea.addEventListener('change', function(e){
+                    const columnId = e.target.id.split("-")
+
+                    PageUtils.updateOutputColumnFeedback(columnId[0]);
+                });
+            })
+
+            document.querySelector('.copy-html').addEventListener('click', function(){
+                PageUtils.copyOutputHtml()
+            });
+
+            //PageUtils.insertSvgHeaderIcons(ICONS, points)
+
+        });
+
+        class PageUtils {
+            static updateFeedback(_checkedScore, _points, _gradeWeights, _pointsValues){
+        
+                // Retrieve overall grade
+                let grade = PageUtils.getOverallGrade(_points, _pointsValues)
+                
+                // Use the overall grade to generate introduction status
+                // and apply that to the intro statement text area
+                document.querySelector('#intro_statement').value = this.getIntroStatus(grade)
+
+                // Then retrieve the value of the text area
+                let introStatement = document.querySelector('#intro_statement').value
+
+                // And update all the page HTML
+                PageUtils.updateGrade(grade)
+                PageUtils.updateIntroductionStatement(introStatement)
+                PageUtils.updateFormColumnScore(_gradeWeights, _pointsValues, _points)
+                PageUtils.updateOutputColumnScore(_gradeWeights, _pointsValues, _points)
+                PageUtils.updateOutputColumnRequirements(_checkedScore)
+                PageUtils.updateHtmlOutput()
+            }
+
+            static updateOutputStudentName(_name){
+                if(_name === null || _name.length === 0){
+                    document.querySelector('.rich-output .student').textContent = ""
+                } else {
+                    document.querySelector('.rich-output .student').textContent = _name + ","
+                }
+            }
+
+            static updateIntroductionStatement(_text){
+                if(_text === null || _text.length === 0){
+                    document.querySelector('.rich-output .intro').textContent = ""
+                } else {
+                    document.querySelector('.rich-output .intro').textContent = _text
+                }
+            }
+
+            static getIntroStatus(_grade){
+                let status = ""
+                
+                switch(true){
+                    case (_grade > 92):
+                        status = "Excellent job on this assignment!"
+                        break;
+                    case (_grade > 80):
+                        status = "Great job on this assignment!"
+                        break;
+                    case (_grade > 69):
+                        status = "Good job on this assignment."
+                        break;
+                    default: 
+                        status = "Good work on this assignment."
+                }
+                return status
+            }
+
+            static updateVideoUrlEmbed(_url){
+                if(_url !== null && _url.length > 0){
+                    let youtubeEmbed = "";
+                    
+                    youtubeEmbed += `<hr />`
+                    youtubeEmbed += `<p>Please watch this video below for some additional feedback:</p>`
+                    youtubeEmbed += `<iframe width="560" height="315" src="https://www.youtube.com/embed/${PageUtils.getYouTubeId(_url)}"`
+                    youtubeEmbed += `title="YouTube video player" frameborder="0" allow="accelerometer; autoplay;` 
+                    youtubeEmbed += `clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+
+                    document.querySelector('.video-feedback').innerHTML = youtubeEmbed
+                    document.querySelector('.video-feedback').style.display = "block"
+                } else {
+                    document.querySelector('.video-feedback').innerHTML = ""
+                    document.querySelector('.video-feedback').style.display = "none"
+                }
+            }
+
+            /**
+             * Updates the HTML class of the element corresponding with the rubric _column 
+             * with the points from the correponding points value category (eg. "GOOD", "POOR", etc.)
+             * 
+             * @param {string} _column Rubric column being evaluated
+             * @param {number} _points Field of the points object that corresponds with the rubric column
+             */
+             static updateFormColumnScore(_gradeWeights, _pointsValues, _points){
+                Object.keys(_points).forEach(_column => {
+
+                    if(_points[_column] != null){
+                        var score = document.querySelector(`li.${_column} .score`)
+
+                        if(score != null){
+                            // Percentage of points out of total available points per passed rubric column
+                            score.textContent = `${_points[_column] * _pointsValues[_column]}/${_pointsValues[_column]}`
+
+                            switch (_points[_column]){
+                                case _gradeWeights.POOR:
+                                    score.className = "score poor"
+                                    break
+
+                                case _gradeWeights.FAIR:
+                                    score.className = "score fair"
+                                    break
+
+                                case _gradeWeights.GOOD:
+                                    score.className = "score good"
+                                    break
+
+                                case _gradeWeights.EXCE:
+                                default:
+                                    score.className = "score excellent"
+                                    break
+                            }
+                        } else {
+                            console.log(`Score element not found for ${_column}!`)
+                        }
+
+                    }
+                })
+            }
+
+            static updateOutputColumnRequirements(_checked){
+                if(_checked.length > 0 && _checked != null){
+                    const listItems = Array.from(document.querySelectorAll(`.output-list li`))
+
+                    listItems.forEach(_item => {
+                        if(_checked.includes(_item.className)){
+                            _item.style = `color: rgb(151, 151, 151); font-weight: normal; margin-top: 4px`
+                            _item.getElementsByTagName("span")[1].style = `display: none`
+                        } else {
+                            _item.style = `color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px` // TODO: Maybe storage these color values
+                            _item.getElementsByTagName("span")[1].style = `display: inline`
+                        }
+                    })
+                } else {
+                    const listItems = Array.from(document.querySelectorAll('.output-list li'))
+
+                    listItems.forEach(_item => {
+                        _item.style = `color: rgb(74, 145, 57); font-weight: bold; margin-top: 4px` // TODO: Maybe storage these color values
+                        _item.getElementsByTagName("span")[0].style = `display: inline`
+                    })
+                }
+            }
+            
+            /**
+             * Updates additional feedback table with corresponding feedback from form.
+             * 
+             * @param {string} _column ID of corresponding rubric column
+             */
+            static updateOutputColumnFeedback(_column){
+                const comment = document.querySelector(`.${_column} #${_column}-comment`).value
+
+                if(comment.length > 0){
+                    document.querySelector(`.${_column}-output table`).style.display = "table"
+
+                    document.querySelector(`.${_column}-output table p`).innerHTML = comment
+                } else {
+                    document.querySelector(`.${_column}-output table`).style.display = "none"
+                }
+            }
+
+            static updateOutputColumnScore(_gradeWeights, _pointsValues, _points){
+                Object.keys(_points).forEach(_column => {
+
+                    // ONLY run for structure
+                    // TODO: Change this when everything is more fleshed out.
+
+                    if(_points[_column] != null){
+                        // Header "score" element
+                        let scoreElement = document.querySelector(`.${_column}-output .output-header span`)
+
+                        if(scoreElement != null){
+                            // Set the score to X out of Y points
+                            scoreElement.textContent = `${_points[_column] * _pointsValues[_column]}/${_pointsValues[_column]}`
+                            
+                            // Select the RGB color value that corresponds with point percentage
+                            switch(_points[_column]){
+                                case _gradeWeights.POOR:
+                                    scoreElement.style = `color: ${VALUE_COLORS.poor}`
+                                    break
+
+                                case _gradeWeights.FAIR:
+                                    scoreElement.style = `color: ${VALUE_COLORS.fair}`
+                                    break
+
+                                case _gradeWeights.GOOD:
+                                    scoreElement.style = `color: ${VALUE_COLORS.good}`
+                                    break
+
+                                case _gradeWeights.EXCE:
+                                default:
+                                    scoreElement.style = `color: ${VALUE_COLORS.exce}`
+                                    break
+                            }
+                        }
+                    }
+                });
+            }
+
+            static updateHtmlOutput(){
+                const outputHtml = document.querySelector(".rich-output").innerHTML
+
+                document.querySelector(".html-output pre").textContent = outputHtml
+            }
+
+            static updateOutputOnCheckedChange(){
+
+            }
+
+            static updateGrade(_grade){
+                document.querySelector('.grade').textContent = _grade
+            }
+
+
+            /**
+             * Generates an SVG from the pathes store in ICONS. Loops through the keys of points, and adds
+             * the SVG to the header of the column output.
+             * */
+            static insertSvgHeaderIcons(_icons, _points){
+                Object.keys(_points).forEach(_column => {
+                    const SVG = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+                    SVG.style.width = "24px"
+                    SVG.style.height = "24px"
+                    SVG.style.position = "relative"
+                    SVG.style.top = "6px"
+                    SVG.style.marginRight = "6px"
+                    SVG.setAttribute("viewBox", "0 0 24 24")
+
+                    const PATH = document.createElementNS("http://www.w3.org/2000/svg","path")
+                    PATH.setAttributeNS(null, "fill", "currentColor")
+                    PATH.setAttributeNS(null, "d", _icons[_column])
+
+                    SVG.appendChild(PATH)
+
+                    //fill = currentColor
+                    document.querySelector(`.${_column}-output .output-header`).prepend(SVG)
+                })
+            }
+
+            static getYouTubeId(_url){
+                let id = ''
+
+                _url = _url.replace(/(>|<)/gi,'').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)
+
+                if(_url[2] !== undefined) {
+                    id = _url[2].split(/[^0-9a-z_\-]/i);
+                    id = id[0];
+                } else {
+                    id = _url;
+                }
+                
+                return id;
+            }
+
+            static copyOutputHtml() {
+                console.log("Click!")
+
+                const el = document.createElement("textarea");
+                el.value = document.querySelector('.rich-output').innerHTML;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
+            }
+
+            static getOverallGrade(_points, _pointsValues){
+                let grade = 0;
+
+                // The grade for each column is determined by the percentage earned, 
+                // multiplied by the total available points. These are then added together.
+                Object.keys(_points).forEach(_column =>{
+                    grade += _points[_column] * _pointsValues[_column]
+                })
+
+                return (grade > 0) ? grade : 0;
+            }
+        }
+
+        class TestBuilder {
+            static buildRequirements(_tests){
+                let container = document.querySelector('.section ul.collapsible')
+
+                _tests.forEach(function(_test){
+                    container.append(TestBuilder.buildRequirement(_test))
+                })
+            }
+
+            static buildRequirement(_test){
+                // Generate element ID
+                const id = TestBuilder.generateIdFromTestName(_test.name);
+
+                // Create li element
+                const listItem = document.createElement('li');
+                listItem.classList.add(id);
+
+                // Create div element with class "collapsible-header"
+                const headerDiv = document.createElement('div');
+                headerDiv.classList.add('collapsible-header');
+
+                // Create i element with class "material-icons"
+                const iconElement = document.createElement('i');
+                iconElement.classList.add('material-icons');
+                iconElement.textContent = 'analytics';
+
+                // Create span element with class "score excellent"
+                const scoreSpan = document.createElement('span');
+                scoreSpan.classList.add('score', 'excellent');
+                scoreSpan.textContent = `${_test.value}/${_test.value}`;
+
+                // Append child elements to headerDiv
+                headerDiv.appendChild(iconElement);
+                headerDiv.appendChild(document.createTextNode(_test.name));
+                headerDiv.appendChild(scoreSpan);
+
+                // Append headerDiv to listItem
+                listItem.appendChild(headerDiv);
+
+                // Create div element with class "collapsible-body"
+                const bodyDiv = document.createElement('div');
+                bodyDiv.classList.add('collapsible-body');
+
+                // console.log(_test);
+
+                _test.requirements.forEach(function(requirement){
+                    // Create label element
+                    const labelElement = document.createElement('label');
+
+                    const requirementId = TestBuilder.generateRequirementIdFromName(requirement.name)
+
+                    // Create input element with type "checkbox" and value "id"
+                    const checkboxInput = document.createElement('input');
+                    checkboxInput.setAttribute('type', 'checkbox');
+                    checkboxInput.setAttribute('value', id + '-' + requirementId);
+
+                    // Create span element
+                    const spanElement = document.createElement('span');
+                    spanElement.textContent = requirement.inverse;
+
+                    // Append input and span elements to labelElement
+                    labelElement.appendChild(checkboxInput);
+                    labelElement.appendChild(spanElement);
+
+                    // Append labelElement to bodyDiv
+                    bodyDiv.appendChild(labelElement);
+                    bodyDiv.appendChild(document.createElement('br'));
+                });
+
+
+                // Create textarea element with id "t01_comment" and class "materialize-textarea"
+                const textareaElement = document.createElement('textarea');
+                textareaElement.setAttribute('id', id + '-comment');
+                textareaElement.classList.add('materialize-textarea');
+
+                // Create label element for textarea
+                const textareaLabel = document.createElement('label');
+                textareaLabel.setAttribute('for', id + '-comment');
+                textareaLabel.textContent = 'Additional Comments';
+
+                // Append textarea and label elements to bodyDiv
+                bodyDiv.appendChild(textareaElement);
+                bodyDiv.appendChild(textareaLabel);
+
+                // Append bodyDiv to listItem
+                listItem.appendChild(bodyDiv);
+
+                return listItem;
+            }
+        
+            static buildPenalties(_penalties){
+                let container = document.querySelector('.section ul.collapsible');
+
+                // Generate element ID
+                const id = "penalties";
+
+                // Create li element
+                const listItem = document.createElement('li');
+                listItem.classList.add(id);
+
+                // Create div element with class "collapsible-header"
+                const headerDiv = document.createElement('div');
+                headerDiv.classList.add('collapsible-header');
+
+                // Create i element with class "material-icons"
+                const iconElement = document.createElement('i');
+                iconElement.classList.add('material-icons');
+                iconElement.textContent = 'analytics';
+
+                // Create span element with class "score excellent"
+                const scoreSpan = document.createElement('span');
+                scoreSpan.classList.add('score', 'excellent');
+                scoreSpan.textContent = 0;
+
+                // Append child elements to headerDiv
+                headerDiv.appendChild(iconElement);
+                headerDiv.appendChild(document.createTextNode("Penalties"));
+                headerDiv.appendChild(scoreSpan);
+
+                // Append headerDiv to listItem
+                listItem.appendChild(headerDiv);
+
+                // Create div element with class "collapsible-body"
+                const bodyDiv = document.createElement('div');
+                bodyDiv.classList.add('collapsible-body');
+
+                // console.log(_test);
+
+                _penalties.forEach(function(_penalty){
+                    // Create label element
+                    const labelElement = document.createElement('label');
+
+                    // Create input element with type "checkbox" and value "id"
+                    const checkboxInput = document.createElement('input');
+                    checkboxInput.setAttribute('type', 'checkbox');
+                    checkboxInput.setAttribute('value', _penalty.id);
+
+                    // Create span element
+                    const spanElement = document.createElement('span');
+                    spanElement.textContent = _penalty.name;
+
+                    // Append input and span elements to labelElement
+                    labelElement.appendChild(checkboxInput);
+                    labelElement.appendChild(spanElement);
+
+                    // Append labelElement to bodyDiv
+                    bodyDiv.appendChild(labelElement);
+                    bodyDiv.appendChild(document.createElement('br'));
+                });
+
+                // Append bodyDiv to listItem
+                listItem.appendChild(bodyDiv);
+
+                container.append(listItem);
+            }
+
+            static buildTestResults(_tests){
+                let container = document.querySelector('.feedback')
+
+                _tests.forEach(function(_test){
+                    container.append(TestBuilder.buildTestResult(_test))
+                })
+            }
+
+            static buildTestResult(_test){
+                // Generate element ID
+                const id = TestBuilder.generateIdFromTestName(_test.name);
+
+                // Create div element with class "t01-output"
+                const outputDiv = document.createElement('div');
+                outputDiv.classList.add(id + '-output');
+
+                // Create strong element with class "output-header"
+                const outputHeader = document.createElement('strong');
+                outputHeader.classList.add('output-header');
+                outputHeader.textContent = _test.name + ": ";
+
+                // Create span element for score
+                const scoreSpanOutput = document.createElement('span');
+                scoreSpanOutput.textContent = `${_test.value}/${_test.value}`;
+
+                // Append span to strong element
+                outputHeader.appendChild(scoreSpanOutput);
+
+                // Append strong element to outputDiv
+                outputDiv.appendChild(outputHeader);
+
+                // Create ul element with class "output-list"
+                const outputList = document.createElement('ul');
+                outputList.classList.add('output-list');
+
+                _test.requirements.forEach(function(_requirement){
+                    const requirementId = TestBuilder.generateRequirementIdFromName(_requirement.name)
+
+                    // Create li element with class "t01-hello"
+                    const reqListItem = document.createElement('li');
+                    reqListItem.classList.add(`${id}-${requirementId}`);
+                    reqListItem.style.color = 'rgb(74, 145, 57)';
+                    reqListItem.style.fontWeight = 'bold';
+                    reqListItem.style.marginTop = '4px';
+
+                    // Create span for feedback
+                    const feedbackSpan = document.createElement('span');
+                    feedbackSpan.classList.add('feedback');
+                    feedbackSpan.textContent = _requirement.requirement;
+
+                    // Create span for checkmark
+                    const checkmarkSpan = document.createElement('span');
+                    checkmarkSpan.textContent = ' ✓';
+
+                    // Append spans to li element
+                    reqListItem.appendChild(feedbackSpan);
+                    reqListItem.appendChild(checkmarkSpan);
+
+                    // Append li element to ul element
+                    outputList.appendChild(reqListItem);
+
+                    // Append ul element to outputDiv
+                    outputDiv.appendChild(outputList);
+                })
+
+                // Create table element with style "display: none; margin-bottom: 12px;"
+                const hiddenTable = document.createElement('table');
+                hiddenTable.style.display = 'none';
+                hiddenTable.style.marginBottom = '12px';
+
+                // Create tbody and tr elements
+                const tbody = document.createElement('tbody');
+                const tr = document.createElement('tr');
+
+                // Create td element
+                const td = document.createElement('td');
+                const p = document.createElement('p');
+
+                // Append p to td, td to tr, and tr to tbody
+                td.appendChild(p);
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+
+                // Append tbody to table element
+                hiddenTable.appendChild(tbody);
+
+                // Append table element to outputDiv
+                outputDiv.appendChild(hiddenTable);
+
+                return outputDiv
+            }
+
+            static buildPointsObject(_tests, _penalties = 0){
+                let points = {};
+
+                _tests.forEach(function(_test){
+                    let pointId = TestBuilder.generateIdFromTestName(_test.name)
+                    
+                    points[pointId] = "";
+                });
+
+                if(_penalties != 0 && _penalties.length > 0){
+                    _penalties.forEach(function(_penalty){
+                        points[_penalty.id] = ""
+                    })
+                }
+
+                return points;
+            }
+
+            static buildTestValuesObject(_tests, _penalties = 0){
+                let testValues = {};
+
+                _tests.forEach(function(_test){
+                    let pointId = TestBuilder.generateIdFromTestName(_test.name)
+
+                    testValues[pointId] = _test.value
+                });
+
+                if(_penalties != 0 && _penalties.length > 0){
+                    _penalties.forEach(function(_penalty){
+                        testValues[_penalty.id] = _penalty.value
+                    })
+                }
+
+                return testValues
+            }
+
+            static generateIdFromTestName(_testName){
+                // Convert the string to lower case
+                let lowercaseName = _testName.toLowerCase();
+
+                // Replace spaces with underscores
+                let formattedName = lowercaseName.replace(/\s+/g, '_');
+
+                // Append "id" to the end
+                let finalResult = formattedName + '_id';
+
+                return finalResult;
+            }
+
+            static generateRequirementIdFromName(_requirementName) {
+                // Convert the string to lowercase
+                const lowercaseStr = _requirementName.toLowerCase();
+
+                // Replace spaces with underscores
+                const result = lowercaseStr.replace(/\s+/g, '_');
+
+                return result;
+            }
+        }
+
+        /**
+         * ======================================
+         * 
+         *      RUBRIC-SPECIFIC GRADE EVALS
+         * 
+         * ======================================
+         * 
+         *  These methods determine how each rubric column is
+         *  evaluated and will need to be change for each assignment.
+         * 
+         */
+         function evaluateTest(_id, _requirements){
+            // This is sloppy but it will get the job done for now
+            let requirement = TestBuilder.generateRequirementIdFromName(_requirements[0].name);
+
+            let elementId = _id + '-' + requirement
+
+            if([elementId].some(element => checkedScore.includes(element))){
+                return GRADE_WEIGHTS.POOR
+            }
+
+            return GRADE_WEIGHTS.EXCE
+        }
+
+        let onCheckedChangeListener = function(_checkboxes){
+            checkedScore =
+                Array.from(_checkboxes)          // Convert checkboxes to an array to use filter and map.
+                    .filter(i => i.checked)     // Use Array.filter to remove unchecked checkboxes.
+                    .map(i => i.value)          // Use Array.map to extract only the checkbox values from the array of objects.
+
+                    console.log(`Checked changed!\n${checkedScore}`)
+
+            // Check all of the tests and apply the points
+            for(const key in points){
+                points[key] = evaluateTest(key);
+            }
+
+            // Update the page HTML
+            PageUtils.updatePage(checkedScore, points, GRADE_WEIGHTS, POINTS_VALUES)
+
+            console.log(points)
+        }
+</script>
+
+    <title>Lab 1 Grading Form</title>
+</head>
+
+<body>
+    <main class="container">
+        <div class="row">
+            <section class="col l6 m12">
+                <h5>Grading</h5>
+
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input id="student_name" type="text" class="validate">
+                        <label for="student_name">Student Name</label>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col s12">
+                        <textarea id="intro_statement" class="materialize-textarea">Excellent job on this assignment!</textarea>
+                        <label for="intro_statement">Introduction statement</label>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h5>Lab 01</h5>
+
+                    <!-- Rubric column evaluations -->
+                    <ul class="collapsible">
+               
+                    </ul>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input id="video_url" type="text" class="validate">
+                        <label for="video_url">Video URL</label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="col l6 m12">
+                <h4>Output</h4>
+                <h5>Rich Text <button class="copy-html waves-effect waves-light btn-small right">Copy HTML</button></h5>
+                <div class="rich-output">
+                    <p>
+                        <span class="student"></span><br /><br />
+
+                        <!-- TODO: Make this dynamic based on grade value -->
+                        <span class="intro">Excellent work on this assignment!</span>
+                    </p>
+
+                    <div class="feedback"></div>
+
+                    <div class="video-feedback" style="display: none;"></div>
+
+                    <p>Final Grade: <span class="grade">100</span>/100</p>
+                </div>
+
+                <h5>HTML</h5>
+                <div class="html-output">
+                    <pre></pre>
+                </div>
+            </section>
+        </div>
+
+    </main>
+</body>
+
+</html>

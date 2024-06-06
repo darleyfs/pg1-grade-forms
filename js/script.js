@@ -114,6 +114,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 function evaluateTest(_id, _requirements){
     // This is sloppy but it will get the job done for now
+    
+    // TODO: I think the solution here would be to give each requirement a "level"
+    // property and then to use the groupBy method here?
+    // TODO 2: Do this as a data property. Generate the element with one.
+    // TODO 3: Just going to have to back it into the ID and then parse it
     let requirement = TestBuilder.generateRequirementIdFromName(_requirements[0].name);
 
     let elementId = _id + '-' + requirement

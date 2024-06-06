@@ -1,0 +1,76 @@
+[
+    {   
+        "name" : "Test 1",
+        "value" : 12.5,
+        "requirements" : [ 
+            {
+                "name" : "Create an enumerator",
+                "requirement" : "Correct MathOperator enumerator value provided.",
+                "inverse" : "Correct MathOperator enumerator value not provided."
+            }
+        ]
+    },
+    {
+        "name" : "Test 2",
+        "value" : 12.5,
+        "requirements" : [{
+            "name" : "Do Math",
+            "requirement" : "Correct mathemetical operation performed on given numbers.",
+            "inverse" : "Correct mathemetical operation not performed on given numbers."
+            }]
+    },
+    {
+        "name" : "Test 3",
+        "value" : 12.5,
+        "requirements" : [{
+            "name" : "Return proven or denied",
+            "requirement" : "Correct string returned based on given input.",
+            "inverse" : "String not returned based on given input."
+        }]
+    },
+    {
+        "name" : "Test 4",
+        "value" : 12.5,
+        "requirements" : [{
+            "name" : "Convesion",
+            "requirement" : "Correct conversion performed based on input.",
+            "inverse" : "Conversion based on input not performed correctly."
+        }]
+    },
+    {
+        "name" : "Test 5",
+        "value" : 12.5,
+        "requirements" : [{
+            "name" : "Give reprimand",
+            "requirement" : "Correct reprimand given.",
+            "inverse" : "Correct reprimand not given."
+        }]
+    },
+    {
+        "name" : "Test 6",
+        "value" : 12.5,
+        "requirements" : [{
+            "name" : "Find Leap Years",
+            "requirement" : "Leap years identified correctly.",
+            "inverse" : "Leap years not identified."
+        }]
+    },
+    {
+        "name" : "Test 7",
+        "value" : 12.5,
+        "requirements" : [{
+            "name" : "Determine right triangle",
+            "requirement" : "Right triangle identified correctly.",
+            "inverse" : "Right triangle not correctly indentified."
+        }]
+    },
+    {
+        "name" : "Test 8",
+        "value" : 12.5,
+        "requirements" : [{
+            "name" : "Determine letter grade",
+            "requirement" : "Correct letter grade returned.",
+            "inverse" : "Correct letter grade not returned."
+        }]
+    }
+]

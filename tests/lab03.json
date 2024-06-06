@@ -1,0 +1,94 @@
+[
+    {   
+        "name" : "Test 1",
+        "value" : 10,
+        "requirements" : [ 
+            {
+                "name" : "Convert years to days",
+                "requirement" : "Years converted to days successfully.",
+                "inverse" : "Years not converted to days"
+            }
+        ]
+    },
+    {
+        "name" : "Test 2",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Divide Two Numbers",
+            "requirement" : "Number 1 divided by number 2 successful.",
+            "inverse" : "The result does not indicate the divisor."
+            }]
+    },
+    {
+        "name" : "Test 3",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Find the remainder",
+            "requirement" : "Remainder returns successfully.",
+            "inverse" : "Remainder not returned."
+        }]
+    },
+    {
+        "name" : "Test 4",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Square root as a float",
+            "requirement" : "Square root returned as a float.",
+            "inverse" : "Square root was not returned as a float."
+        }]
+    },
+    {
+        "name" : "Test 5",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Find the exponent",
+            "requirement" : "Exponent returned.",
+            "inverse" : "Exponent not returned."
+        }]
+    },
+    {
+        "name" : "Test 6",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Create a method to return a combined phrase",
+            "requirement" : "Method created correctly and successfully returns the combined phrase.",
+            "inverse" : "Method was not created correctly and/or does not return the combined phrase."
+        }]
+    },
+    {
+        "name" : "Test 7",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Create a method to return double as a float",
+            "requirement" : "Method created correctly and successfully returns the given double as a float.",
+            "inverse" : "Method was not created correctly and/or does not return the given double as a float."
+        }]
+    },
+    {
+        "name" : "Test 8",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Create a method to find an average",
+            "requirement" : "Method created correctly and successfully returns the average as a double.",
+            "inverse" : "Method was not created correctly and/or does not return the average as a double."
+        }]
+    },
+    {
+        "name" : "Test 9",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Create a method to find the area of a triangle",
+            "requirement" : "Method created correctly and successfully returns the triangle's area as a double.",
+            "inverse" : "Method was not created correctly and/or does not return the triangle's area as a double."
+        }]
+    },
+    {
+        "name" : "Test 10",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Overload Test 2",
+            "requirement" : "An overloaded Test2 method was created correctly.",
+            "inverse" : "An overloaded Test2 method was not created correctly."
+        }]
+    }
+]

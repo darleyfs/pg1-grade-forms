@@ -1,6 +1,17 @@
 [
-    {   
+    {
         "name": "Test 1",
+        "value": 12.5,
+        "requirements": [
+            {
+                "name": "Raise to a power",
+                "requirement": "Correct result for raising root to exponent.",
+                "inverse": "Incorrect result for raising to a power."
+            }
+        ]
+    },
+    {   
+        "name": "Test 2",
         "value": 12.5,
         "requirements": [
             {
@@ -11,40 +22,18 @@
         ]
     },
     {
-        "name": "Test 2",
-        "value": 12.5,
-        "requirements": [
-            {
-                "name": "Factorial",
-                "requirement": "Calculate correct factorial for number.",
-                "inverse": "Incorrect factorial calculation."
-            }
-        ]
-    },
-    {
         "name": "Test 3",
         "value": 12.5,
         "requirements": [
             {
-                "name": "Raise to a power",
-                "requirement": "Correct result for raising root to exponent.",
-                "inverse": "Incorrect result for raising to a power."
+                "name": "Build a string",
+                "requirement": "Correct construction of the string made up of starter and the next number of characters (in order).",
+                "inverse": "Incorrect string construction."
             }
         ]
     },
     {
         "name": "Test 4",
-        "value": 12.5,
-        "requirements": [
-            {
-                "name": "Consumable",
-                "requirement": "Correct number of cycles before on-hand amount is empty.",
-                "inverse": "Incorrect number of cycles before on-hand amount is empty."
-            }
-        ]
-    },
-    {
-        "name": "Test 5",
         "value": 12.5,
         "requirements": [
             {
@@ -55,13 +44,24 @@
         ]
     },
     {
+        "name": "Test 5",
+        "value": 12.5,
+        "requirements": [
+            {
+                "name": "Consumable",
+                "requirement": "Correct number of cycles before on-hand amount is empty.",
+                "inverse": "Incorrect number of cycles before on-hand amount is empty."
+            }
+        ]
+    },
+    {
         "name": "Test 6",
         "value": 12.5,
         "requirements": [
             {
-                "name": "Build a string",
-                "requirement": "Correct construction of the string made up of starter and the next number of characters (in order).",
-                "inverse": "Incorrect string construction."
+                "name": "Sum of values",
+                "requirement": "Correct sum of all values between start and end (inclusive).",
+                "inverse": "Incorrect sum of values."
             }
         ]
     },
@@ -81,9 +81,9 @@
         "value": 12.5,
         "requirements": [
             {
-                "name": "Sum of values",
-                "requirement": "Correct sum of all values between start and end (inclusive).",
-                "inverse": "Incorrect sum of values."
+                "name": "Factorial",
+                "requirement": "Calculate correct factorial for number.",
+                "inverse": "Incorrect factorial calculation."
             }
         ]
     }

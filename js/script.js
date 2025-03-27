@@ -1,38 +1,11 @@
+import { PageUtils } from './PageUtils.js';
+import { TestBuilder } from './TestBuilder.js';
+
 const GRADE_WEIGHTS = {
     "POOR" : 0,
     "FAIR" : 0.45,
     "GOOD" : 0.80,
     "EXCE" : 1
-}
-
-// Earned point values for rubric columns
-// Note: These keys define keys used throughout the document
-let points = {
-    "t01" : "",
-    "t02" : "",
-    "t03" : "",
-    "t04" : "",
-    "t05" : "",
-    "t06" : "",
-    "t07" : "",
-    "t08" : "",
-    "t09" : "",
-    "t10" : ""
-};
-
-// Total points available for each column
-// Total value = 100
-const POINTS_VALUES = {
-    "t01" : 10,
-    "t02" : 10,
-    "t03" : 10,
-    "t04" : 10,
-    "t05" : 10,
-    "t06" : 10,
-    "t07" : 10,
-    "t08" : 10,
-    "t09" : 20,
-    "t10" : 0,
 }
 
 // "d" values for the SVG paths of the output headers
@@ -47,20 +20,31 @@ const ICONS = {
     "t08" : `M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4C22,2.89 21.1,2 20,2Z`,
     "t09" : `M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z`,
     "t10" : `M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z`
-
 }
 
 let checkedScore = []
 
-document.addEventListener('DOMContentLoaded', function () {
-    let output;
 
+document.addEventListener('DOMContentLoaded', async function () {
     // Intializers
+    let tests = await loadJSON(TEST_PATH)
+    let penalties = await loadJSON(PENALTY_PATH)
+
+    // Earned point values for rubric columns
+    let points = TestBuilder.buildPointsObject(tests)
+
+    // Total points available for each column
+    const pointsValues = TestBuilder.buildTestValuesObject(tests)
+
     var elems = document.querySelectorAll('select')
     var instances = M.FormSelect.init(elems, null)
 
     var elems = document.querySelectorAll('.collapsible')
     var instances = M.Collapsible.init(elems, null)
+
+    TestBuilder.buildRequirements(tests);
+    TestBuilder.buildPenalties(penalties);
+    TestBuilder.buildTestResults(tests);
 
     // Checkboxes
     var checkboxes = document.querySelectorAll("input[type=checkbox]")
@@ -75,15 +59,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     console.log(`Checked changed!\n${checkedScore}`)
 
+
+            let i = 0;
+
             // Check all of the tests and apply the points
             for(const key in points){
-                points[key] = evaluateTest(key);
+
+                // This is super sloppy but a temporary fix
+                points[key] = evaluateTest(key, tests[i].requirements);
+                i++;
+
+                // points[key] = evaluateTest(key);
             }
 
             // Update the page HTML
-            PageUtils.updateFeedback(checkedScore, points, GRADE_WEIGHTS, POINTS_VALUES)
-
-            console.log(points)
+            PageUtils.updateFeedback(checkedScore, points, GRADE_WEIGHTS, pointsValues)
         });
     });
 
@@ -91,6 +81,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#student_name').addEventListener('change', function(e){
         PageUtils.updateOutputStudentName(e.target.value)
     })
+
+    // Update output student name
+    document.querySelector('#intro_statement').addEventListener('change', function(e){
+        PageUtils.updateIntroductionStatement(e.target.value)
+    })
+
 
     // Update embedded feedback video
     document.querySelector('#video_url').addEventListener('change', function(e){
@@ -102,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     textareas.forEach(_textarea => {
         _textarea.addEventListener('change', function(e){
-            const columnId = e.target.id.split("_")
+            const columnId = e.target.id.split("-")
 
             PageUtils.updateOutputColumnFeedback(columnId[0]);
         });
@@ -112,13 +108,22 @@ document.addEventListener('DOMContentLoaded', function () {
         PageUtils.copyOutputHtml()
     });
 
-    PageUtils.insertSvgHeaderIcons(ICONS)
+    //PageUtils.insertSvgHeaderIcons(ICONS, points)
+
 });
 
-function evaluateTest(id){
-    console.log(`${id} checked`)
+function evaluateTest(_id, _requirements){
+    // This is sloppy but it will get the job done for now
+    
+    // TODO: I think the solution here would be to give each requirement a "level"
+    // property and then to use the groupBy method here?
+    // TODO 2: Do this as a data property. Generate the element with one.
+    // TODO 3: Just going to have to back it into the ID and then parse it
+    let requirement = TestBuilder.generateRequirementIdFromName(_requirements[0].name);
 
-    if([id].some(element => checkedScore.includes(element))){
+    let elementId = _id + '-' + requirement
+
+    if([elementId].some(element => checkedScore.includes(element))){
         return GRADE_WEIGHTS.POOR
     }
 
@@ -142,4 +147,20 @@ let onCheckedChangeListener = function(_checkboxes){
     PageUtils.updatePage(checkedScore, points, GRADE_WEIGHTS, POINTS_VALUES)
 
     console.log(points)
+}
+
+function loadJSON(_path) {
+    return new Promise((resolve, reject) => {
+        // Assuming loadJSON is an asynchronous function, use fetch or another async mechanism
+        // For example, using fetch:
+        fetch(_path)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${_path}`);
+                }
+                return response.json();
+            })
+            .then(data => resolve(data))
+            .catch(error => reject(error));
+    });
 }

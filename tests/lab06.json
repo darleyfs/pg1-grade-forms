@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Test 1",
+        "value": 10,
+        "requirements": [
+            { "name": "Array Index", "requirement": "Return correct item at the given index of the array.", "inverse": "Incorrect item returned at the given index." }
+        ]
+    },
+    {
+        "name": "Test 2",
+        "value": 10,
+        "requirements": [
+            { "name": "Replace Item", "requirement": "Replace item at the given index with 0.", "inverse": "Item at the given index not replaced with 0." }
+        ]
+    },
+    {
+        "name": "Test 3",
+        "value": 10,
+        "requirements": [
+            { "name": "Duplicate Strings", "requirement": "Return true if vector contains duplicate strings, otherwise return false.", "inverse": "Incorrect determination of duplicate strings." }
+        ]
+    },
+    {
+        "name": "Test 4",
+        "value": 10,
+        "requirements": [
+            { "name": "Vector Element Access", "requirement": "Return correct item at the given index of the vector using the at() method.", "inverse": "Incorrect item returned at the given index using the at() method." }
+        ]
+    },
+    {
+        "name": "Test 5",
+        "value": 10,
+        "requirements": [
+            { "name": "Vector Creation", "requirement": "Return vector with 5 integers added using the push_back() method.", "inverse": "Incorrect vector creation with integers." }
+        ]
+    },
+    {
+        "name": "Test 6",
+        "value": 10,
+        "requirements": [
+            { "name": "String Vector Order", "requirement": "Return vector with 4 strings added in order without using push_back().", "inverse": "Incorrect string vector creation in order." }
+        ]
+    },
+    {
+        "name": "Test 7",
+        "value": 10,
+        "requirements": [
+            { "name": "Char Array to Integer Vector", "requirement": "Return integer vector converted from given char array.", "inverse": "Incorrect conversion of char array to integer vector." }
+        ]
+    },
+    {
+        "name": "Test 8",
+        "value": 10,
+        "requirements": [
+            { "name": "Change Capital Letters", "requirement": "Change array so that every other letter is lowercase.", "inverse": "Incorrect change of capital letters to lowercase." }
+        ]
+    },
+    {
+        "name": "Test 9",
+        "value": 10,
+        "requirements": [
+            { "name": "Combine Integer Vectors", "requirement": "Return a 2D vector from 3 given integer vectors.", "inverse": "Incorrect combination of integer vectors into a 2D vector." }
+        ]
+    },
+    {
+        "name": "Test 10",
+        "value": 10,
+        "requirements": [
+            { "name": "Transpose 2D Vector", "requirement": "Return a transposed 2D vector.", "inverse": "Incorrect transposition of 2D vector." }
+        ]
+    }
+]

@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Test 1",
+        "value": 12.5,
+        "requirements": [
+            { "name": "Create Circle Class", "requirement": "Create Circle class with constructors, attributes, accessors, and mutators.", "inverse": "Circle class not created as required." }
+        ]
+    },
+    {
+        "name": "Test 2",
+        "value": 12.5,
+        "requirements": [
+            { "name": "Create GetArea Method", "requirement": "Create GetArea() method in Circle class.", "inverse": "GetArea() method not created as required." }
+        ]
+    },
+    {
+        "name": "Test 3",
+        "value": 12.5,
+        "requirements": [
+            { "name": "Create GetCircumference Method", "requirement": "Create GetCircumference() method in Circle class.", "inverse": "GetCircumference() method not created as required." }
+        ]
+    },
+    {
+        "name": "Test 4",
+        "value": 12.5,
+        "requirements": [
+            { "name": "Create GetDiameter Method", "requirement": "Create GetDiameter() method in Circle class.", "inverse": "GetDiameter() method not created as required." }
+        ]
+    },
+    {
+        "name": "Test 5",
+        "value": 12.5,
+        "requirements": [
+            { "name": "Create TextCodec Class", "requirement": "Create TextCodec class with constructors, attributes, and Encode() method.", "inverse": "TextCodec class not created as required." }
+        ]
+    },
+    {
+        "name": "Test 6",
+        "value": 12.5,
+        "requirements": [
+            { "name": "Create Decode Method", "requirement": "Create Decode() method in TextCodec class.", "inverse": "Decode() method not created as required." }
+        ]
+    },
+    {
+        "name": "Test 7",
+        "value": 12.5,
+        "requirements": [
+            { "name": "Create Book Class", "requirement": "Create Book class with constructors, attributes, and accessors.", "inverse": "Book class not created as required." }
+        ]
+    },
+    {
+        "name": "Test 8",
+        "value": 12.5,
+        "requirements": [
+            { "name": "Create Overloaded Constructor", "requirement": "Create overloaded constructor in Book class.", "inverse": "Overloaded constructor not created as required." }
+        ]
+    }
+]

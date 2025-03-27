@@ -1,0 +1,94 @@
+[
+    {   
+        "name" : "Test 1",
+        "value" : 10,
+        "requirements" : [ 
+            {
+                "name" : "Fix Errors",
+                "requirement" : "All errors in the Debugging Exercise project have been corrected.",
+                "inverse" : "The Debugging Exercise project contains unresolved errors."
+            }
+        ]
+    },
+    {
+        "name" : "Test 2",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Debugging Document",
+            "requirement" : "The debugging questionnaire has been completed.",
+            "inverse" : "The debugging questionnaire has not been completed correctly."
+            }]
+    },
+    {
+        "name" : "Test 3",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "String to Int",
+            "requirement" : "The stoi() method was used to convert string input to an integer.",
+            "inverse" : "The stoi() method was not used to convert string input to an integer."
+        }]
+    },
+    {
+        "name" : "Test 4",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "String to Double",
+            "requirement" : "The stod() method was used to convert string input to a double.",
+            "inverse" : "The stod() method was not used to convert string input to a double."
+        }]
+    },
+    {
+        "name" : "Test 5",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "String to Float",
+            "requirement" : "The stof() method was used to convert string input to a float.",
+            "inverse" : "The stod() method was not used to convert string input to a float."
+        }]
+    },
+    {
+        "name" : "Test 6",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "String to Unsigned Integer",
+            "requirement" : "The stoul() method was used to convert string input to an unsigned integer.",
+            "inverse" : "The stoul() method was used to convert string input to an unsigned integer."
+        }]
+    },
+    {
+        "name" : "Test 7",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "String to Unsigned Long",
+            "requirement" : "The stoull() method was used to convert string input to an unsigned long.",
+            "inverse" : "The stoull() method was used to convert string input to an unsigned long."
+        }]
+    },
+    {
+        "name" : "Test 8",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Cast Double to Float",
+            "requirement" : "Double input value converted to float using a cast.",
+            "inverse" : "Double input value was not converted to float using a cast."
+        }]
+    },
+    {
+        "name" : "Test 9",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Cast Float to Int",
+            "requirement" : "Float input value converted to an integer using a cast.",
+            "inverse" : "Float input value was not converted to an integer using a cast."
+        }]
+    },
+    {
+        "name" : "Test 10",
+        "value" : 10,
+        "requirements" : [{
+            "name" : "Integer to String",
+            "requirement" : "Integer input value converted to a string using the to_string() method.",
+            "inverse" : "Integer input value was not converted to a string using the to_string() method."
+        }]
+    }
+]

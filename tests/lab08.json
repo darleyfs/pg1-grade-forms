@@ -1,0 +1,57 @@
+[
+    {
+        "name": "Test 1",
+        "value": 20,
+        "requirements": [
+            {
+                "name": "Member fields and Constructors",
+                "requirement": "Add member fields and constructors to the Student class.",
+                "inverse": "Member fields and constructors not added as required."
+            }
+        ]
+    },
+    {
+        "name": "Test 2",
+        "value": 20,
+        "requirements": [
+            {
+                "name": "Getters and Setters",
+                "requirement": "Add public getters and setters for the Student class member fields.",
+                "inverse": "Getters and setters not added as required."
+            }
+        ]
+    },
+    {
+        "name": "Test 3",
+        "value": 20,
+        "requirements": [
+            {
+                "name": "Insert into collection",
+                "requirement": "Given a student object, enrolled, and a vector of students, place the enrolled student into an open space.",
+                "inverse": "Enrolled student not placed into an open space as required."
+            }
+        ]
+    },
+    {
+        "name": "Test 4",
+        "value": 20,
+        "requirements": [
+            {
+                "name": "Remove from collection",
+                "requirement": "Given an integer idNumber and a vector of students, replace the student with the given ID number.",
+                "inverse": "Student with the given ID number not replaced as required."
+            }
+        ]
+    },
+    {
+        "name": "Test 5",
+        "value": 20,
+        "requirements": [
+            {
+                "name": "Retrieve from collection",
+                "requirement": "Given an integer idNumber and a vector of students, return the student with the given ID number.",
+                "inverse": "Student with the given ID number not retrieved as required."
+            }
+        ]
+    }
+]

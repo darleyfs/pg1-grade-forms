@@ -1,8 +1,13 @@
 :root {
+    --background-color: #121212;
+	--foreground-color: #dedede;
     --foreground-good-color: rgb(0, 194, 0);
     --foreground-fair-color: rgb(206, 134, 0);
     --foreground-poor-color: rgb(161, 0, 0);
     --foreground-excellent-color: rgb(0, 199, 199);
+
+    background: var(--background-color);
+    color: var(--foreground-color);
 }
 
 .collapsible {
@@ -11,6 +16,7 @@
 
 .collapsible-header {
     position: relative;
+	background-color: var(--background-color);
 }
 
 .score {
@@ -38,9 +44,10 @@
 }
 
 .html-output, .rich-output {
-    border: 1px solid #eee;
+    /* border: 1px solid #eee; */
     padding: 16px;
     border-radius: 5px;
+	color: white;
 }
 
 pre {
@@ -57,4 +64,8 @@ table tr {
 
 table td {
     padding: 0 0 0 10px
+}
+
+textarea {
+  color: white;
 }
